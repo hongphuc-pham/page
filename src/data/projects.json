@@ -1,0 +1,38 @@
+[
+	{
+		"title": "RAG Platform",
+		"category": "Web Development",
+		"summary": "Retrieval-augmented system using pgvector/Milvus + Neo4j for graph edges and semantic search.",
+		"tech": ["React","FastAPI","PostgreSQL","Milvus","Neo4j","Ollama"],
+		"link": "#",
+		"repo": "https://github.com/hongphuc-pham",
+		"image": "/assets/portfolio/rag.jpg"
+	},
+	{
+		"title": "Tree Height Estimation",
+		"category": "ML",
+		"summary": "Street-view CV pipeline estimating tree height/species; UofA project.",
+		"tech": ["Python","TensorFlow/PyTorch","OpenCV"],
+		"link": "#",
+		"repo": "https://github.com/hongphuc-pham",
+		"image": "/assets/portfolio/trees.jpg"
+	},
+	{
+		"title": "Disaster-Recovery App",
+		"category": "Web Development",
+		"summary": "Java/Spring Boot + MS SQL app for annual DR activity workflows at ANZ.",
+		"tech": ["Java","Spring Boot","MS SQL","OpenShift","Docker"],
+		"link": "#",
+		"repo": "https://github.com/hongphuc-pham",
+		"image": "/assets/portfolio/dr.jpg"
+	},
+	{
+		"title": "Floor-Plan Estimation",
+		"category": "ML",
+		"summary": "CV/ML to detect/estimate features from 2D floor plans; reduced manual labeling.",
+		"tech": ["Python","PyTorch","OpenCV"],
+		"link": "#",
+		"repo": "https://github.com/hongphuc-pham",
+		"image": "/assets/portfolio/floorplan.jpg"
+	}
+]

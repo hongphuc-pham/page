@@ -1,0 +1,10 @@
+{
+	"intro": "Software engineer with experience in web and mobile apps and a strong interest in ML/AI. I build scalable products and enjoy fast, growth-oriented teams—especially fintech.",
+	"doing": [
+		{"icon":"Web","title":"Web Design","text":"Modern, accessible design with MUI and React."},
+		{"icon":"Code","title":"Web Development","text":"Full-stack apps with React/Next, Node, FastAPI."},
+		{"icon":"PhoneIphone","title":"Mobile Apps","text":"Cross-platform apps using React Native/Expo."},
+		{"icon":"Hub","title":"ML & RAG","text":"Vector/graph search, LLM agents, automation."}
+	],
+	"testimonials": []
+}

@@ -1,0 +1,98 @@
+[
+    {
+        "range": "Dec 2023 – Present",
+        "title": "Software Developer",
+        "org": "The University of Adelaide — Centre for Research on Engineering Software Technologies (CREST)",
+        "location": "Australia",
+        "achievements": [
+            "Delivered cross-platform applications to enhance accessibility and performance across multiple OS environments.",
+            "Integrated LLMs and foundational models to automate complex workflows and boost overall system intelligence."
+        ],
+        "responsibilities": [
+            "Analysed system bottlenecks and proposed technical enhancements for scalability and reliability.",
+            "Designed, implemented, and deployed applications across Linux, Windows, and Android environments using React, React Native, TypeScript, and Python.",
+            "Built and maintained retrieval-augmented generation (RAG) systems leveraging vector and graph databases (Milvus, Neo4j, PostgreSQL) to optimise semantic retrieval.",
+            "Integrated machine-learning models and automation tools (Ollama, Gemini, Llama, HuggingFace) into production workflows.",
+            "Gathered operational metrics to guide system improvements and data-driven decision-making.",
+            "Mentored students in software engineering and system analysis, encouraging innovation and applied technical skills."
+        ]
+    },
+    {
+        "range": "Jul 2023 – Sep 2023",
+        "title": "Research Fellow",
+        "org": "RAYO",
+        "location": "Vietnam",
+        "responsibilities": [
+            "Built with a tech-enthusiast team an AI-powered browser extension to improve website accessibility for people with visual impairments.",
+            "Researched internet-usage patterns among disabled users and contributed to prototype design and usability evaluation."
+        ]
+    },
+    {
+        "range": "Feb 2023",
+        "title": "Accredited Mental Health First Aider",
+        "location": "Australia",
+        "responsibilities": [
+            "Completed national certification to provide initial support for mental health challenges in workplace and community environments."
+        ]
+    },
+    {
+        "range": "Jul 2022 – Dec 2022",
+        "title": "AI & ML Student Club Committee",
+        "org": "The University of Adelaide",
+        "location": "Australia",
+        "responsibilities": [
+            "Organised events, workshops, and collaborative initiatives to promote applied ML and AI research within the student community."
+        ]
+    },
+    {
+        "range": "Sep 2022 – Dec 2022",
+        "title": "IT Researcher",
+        "org": "Eclipse CS Pty Ltd",
+        "location": "Australia",
+        "achievements": [
+            "Proposed a new automated solution to address persistent challenges in construction engineering.",
+            "Developed computer-vision and ML models to detect and estimate features from 2D floor plans, cutting manual identification effort significantly."
+        ],
+        "responsibilities": [
+            "Designed and implemented algorithms using Python and PyTorch for floor-plan estimation.",
+            "Collaborated with domain experts to refine models and integrate them into existing workflows.",
+            "Analysed model performance, improved accuracy iteratively, and presented findings to stakeholders for further development."
+        ]
+    },
+    {
+        "range": "Oct 2020 – Dec 2020",
+        "title": "Business Analyst",
+        "org": "X1 Startup Project",
+        "location": "Vietnam",
+        "responsibilities": [
+            "Worked in the top 10% of projects in the Start-up Wheel 2020 competition for innovative solutions.",
+            "Researched and scoped a unified payment platform covering public services, transportation, parking, university services, and F&B."
+        ]
+    },
+    {
+        "range": "Oct 2019",
+        "title": "Daffodil Day Fundraising Volunteer",
+        "org": "ANZ",
+        "location": "New Zealand",
+        "responsibilities": [
+            "Collaborated with colleagues to raise NZ$11,000 for cancer-support services (~30% above target).",
+            "Organised collection activities, promoted awareness, and supported the annual appeal."
+        ]
+    },
+    {
+        "range": "Mar 2019 – Sep 2020",
+        "title": "Application Developer",
+        "org": "ANZ New Zealand",
+        "location": "New Zealand",
+        "achievements": [
+            "Kau Mau Te Wehi Award (2019) for enhancing the annual disaster-recovery exercise; ~10% faster than prior year.",
+            "Restructured a core MS SQL Server database schema to improve data-access efficiency and support migration processes."
+        ],
+        "responsibilities": [
+            "Developed a Java/Spring Boot Disaster-Recovery application and microservices to modernise the workflow previously tracked in Excel sheets (JavaScript, OpenShift, Docker, MS SQL).",
+            "Analysed business requirements, researched solutions, and maintained documentation across the full SDLC.",
+            "Produced technical and user-facing guides to support adoption by technical and non-technical stakeholders.",
+            "Aligned software with business continuity objectives; performed DB operations (backups, restores, migrations)."
+        ]
+    }
+]

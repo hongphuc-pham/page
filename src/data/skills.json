@@ -1,0 +1,13 @@
+{
+	"languages": ["Python","JavaScript","TypeScript","Java"],
+	"frontend_fullstack": ["React","Next.js","Node.js","Expo","FastAPI"],
+	"databases": ["PostgreSQL","MongoDB","Neo4j","Milvus","MinIO"],
+	"tools": ["Docker","Portainer","Git","Bash","PowerShell","Ollama","RAG","TensorFlow","PyTorch","Android Studio"],
+	"soft": ["Time management","Problem solving","Independence","Teamwork","Prompting & research"],
+	"bars": [
+		{"name":"Web Development","value":90},
+		{"name":"Mobile Apps","value":80},
+		{"name":"ML & RAG","value":80},
+		{"name":"Branding/Design","value":70}
+	]
+}

@@ -1,0 +1,14 @@
+[
+	{
+		"title": "Master of Machine Learning",
+		"org": "The University of Adelaide",
+		"projects": [
+			"Tree Height Estimation: CV method to estimate tree height and species from street-view imagery."
+		]
+	},
+	{
+		"title": "Bachelor of Information Technology",
+		"org": "Wellington Institute of Technology (WelTec)",
+		"awards": ["Patrick Pop Memorial Shield — Top third-year industrial IT project"]
+	}
+]
