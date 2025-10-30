@@ -2,6 +2,7 @@ import { Avatar, Box, Button, Divider, IconButton, Link, Paper, Stack, Tooltip, 
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import LinkedInIcon from '@mui/icons-material/LinkedIn'
+import LocationOnIcon from '@mui/icons-material/LocationOn'
 import site from '../config/site'
 import avatar from '../assets/ava.jpg'
 import DescriptionIcon from '@mui/icons-material/Description'
@@ -35,11 +36,14 @@ export function Sidebar() {
 					<Avatar src={avatar} alt={site.name} sx={{ width: 96, height: 96, bgcolor: 'primary.main', fontSize: 36 }}>PP</Avatar>
 					<Typography variant="h6">{site.name}</Typography>
 					<Typography variant="body2" color="text.secondary">{site.role}</Typography>
-					<Typography variant="body2" color="text.secondary">{site.location}</Typography>
+					<Stack direction="row" alignItems="center" spacing={0.5}>
+						<LocationOnIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+						<Typography variant="body2" color="text.secondary">{site.location}</Typography>
+					</Stack>
 				</Stack>
 				<Divider sx={{ borderColor: 'rgba(255,255,255,0.06)' }} />
 				<Stack spacing={0.5}>
-					<Stack direction="row" alignItems="center" spacing={1}>
+					<Stack direction="row" alignItems="center" spacing={1} sx={{ justifyContent: 'center' }}>
 						<Typography variant="body2">{site.email}</Typography>
 						<Tooltip title="Copy email">
 							<IconButton size="small" onClick={copyEmail}>
@@ -47,7 +51,7 @@ export function Sidebar() {
 							</IconButton>
 						</Tooltip>
 					</Stack>
-					<Typography variant="body2">{site.phone}</Typography>
+					<Typography variant="body2" sx={{ textAlign: 'center' }}>{site.phone}</Typography>
 					<Stack direction="row" spacing={1} justifyContent="center">
 						<IconButton component={Link} href={site.socials.github} target="_blank" rel="noreferrer" aria-label="GitHub">
 							<GitHubIcon />

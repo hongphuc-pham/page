@@ -13,14 +13,18 @@ export function Home() {
 		<Stack spacing={2}>
 			<SectionCard>
 				<Typography variant="h6" gutterBottom>About Me</Typography>
-				<Typography color="text.secondary">{(about as any).intro}</Typography>
+				{(about as any).description && (
+					<Typography color="text.secondary" sx={{ textAlign: 'left' }}>
+						{(about as any).description}
+					</Typography>
+				)}
 			</SectionCard>
 
 			<SectionCard>
 				<Typography variant="h6" gutterBottom>What I'm Doing</Typography>
 				<Grid container spacing={2}>
 					{(((about as any).doing || []) as any[]).map((item: any, idx: number) => (
-						<Grid item xs={12} sm={6} md={3} key={idx}>
+						<Grid item xs={12} sm={6} md={4} key={idx}>
 							<FeatureCard icon={item.icon} title={item.title} text={item.text} />
 						</Grid>
 					))}
@@ -40,31 +44,31 @@ export function Home() {
 								<Stack spacing={1}>
 									<Typography variant="subtitle2">Languages</Typography>
 									<Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-										{((skills as any).languages || []).map((s: string) => <Chip key={s} label={s} />)}
+										{((skills as any).languages || []).map((s: string) => <Chip key={s} label={s} sx={{ border: '1px solid', borderColor: 'primary.main' }} />)}
 									</Stack>
 								</Stack>
 								<Stack spacing={1}>
 									<Typography variant="subtitle2">Front-End & Full-Stack</Typography>
 									<Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-										{((skills as any).frontend_fullstack || []).map((s: string) => <Chip key={s} label={s} />)}
+										{((skills as any).frontend_fullstack || []).map((s: string) => <Chip key={s} label={s} sx={{ border: '1px solid', borderColor: 'primary.main' }} />)}
 									</Stack>
 								</Stack>
 								<Stack spacing={1}>
 									<Typography variant="subtitle2">Databases & Storage</Typography>
 									<Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-										{((skills as any).databases || []).map((s: string) => <Chip key={s} label={s} />)}
+										{((skills as any).databases || []).map((s: string) => <Chip key={s} label={s} sx={{ border: '1px solid', borderColor: 'primary.main' }} />)}
 									</Stack>
 								</Stack>
 								<Stack spacing={1}>
 									<Typography variant="subtitle2">Tools & Tech</Typography>
 									<Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-										{((skills as any).tools || []).map((s: string) => <Chip key={s} label={s} />)}
+										{((skills as any).tools || []).map((s: string) => <Chip key={s} label={s} sx={{ border: '1px solid', borderColor: 'primary.main' }} />)}
 									</Stack>
 								</Stack>
 								<Stack spacing={1}>
 									<Typography variant="subtitle2">Soft skills</Typography>
 									<Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-										{((skills as any).soft || []).map((s: string) => <Chip key={s} label={s} />)}
+										{((skills as any).soft || []).map((s: string) => <Chip key={s} label={s} sx={{ border: '1px solid', borderColor: 'primary.main' }} />)}
 									</Stack>
 								</Stack>
 							</Stack>

@@ -1,6 +1,7 @@
 const site = {
 	name: 'Phuc (William) Pham',
-	role: 'Software Engineer — Web, Mobile, ML/AI',
+	role: 'Software Engineer',
+	subRole: 'Web, Mobile, ML/AI',
 	location: 'Adelaide, SA',
 	email: 'hongphuc.pham@outlook.com',
 	phone: '0401 766 596',
