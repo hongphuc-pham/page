@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, IconButton, Link, Stack, Tooltip, Typography } from '@mui/material'
+import { Avatar, Box, Button, Divider, IconButton, Link, Stack, Tooltip, Typography } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import LinkedInIcon from '@mui/icons-material/LinkedIn'
@@ -11,6 +11,8 @@ import site from '../config/site'
 import avatar from '../assets/ava.jpg'
 import resume from '../assets/Phuc_Pham-CV-0401766596.docx'
 import { fonts, tokens } from '../theme'
+import { SectionNav } from './SectionNav'
+import { MascotToon } from './MascotToon'
 
 export function Sidebar() {
 	const copyEmail = async () => {
@@ -31,10 +33,12 @@ export function Sidebar() {
 				height: { md: '100dvh' },
 				p: { xs: 2, md: 2.5 },
 				borderRight: { md: `1px solid ${tokens.line}` },
-				backgroundColor: tokens.bg,
+				backgroundColor: 'rgba(10,13,20,0.65)',
+				backdropFilter: 'blur(8px)',
 				display: 'flex',
 				flexDirection: 'column',
 				gap: 2,
+				overflowY: { md: 'auto' },
 			}}
 		>
 			<Box
@@ -45,7 +49,8 @@ export function Sidebar() {
 					bgcolor: tokens.surface,
 					display: 'flex',
 					flexDirection: 'column',
-					gap: 2,
+					gap: 1.75,
+					flexShrink: 0,
 				}}
 			>
 				<Stack direction="row" alignItems="center" spacing={2}>
@@ -54,8 +59,8 @@ export function Sidebar() {
 							src={avatar}
 							alt={site.name}
 							sx={{
-								width: 72,
-								height: 72,
+								width: 64,
+								height: 64,
 								border: `2px solid ${tokens.primary}`,
 								boxShadow: '0 0 0 4px rgba(124,231,255,0.12)',
 							}}
@@ -67,20 +72,28 @@ export function Sidebar() {
 								position: 'absolute',
 								bottom: 2,
 								right: 2,
-								width: 14,
-								height: 14,
+								width: 12,
+								height: 12,
 								borderRadius: '50%',
 								bgcolor: tokens.lime,
 								border: `2px solid ${tokens.surface}`,
 							}}
 						/>
 					</Box>
-					<Box>
-						<Typography sx={{ fontFamily: fonts.display, fontSize: 18, fontWeight: 600, lineHeight: 1.15 }}>
+					<Box sx={{ minWidth: 0 }}>
+						<Typography sx={{ fontFamily: fonts.display, fontSize: 17, fontWeight: 600, lineHeight: 1.15 }}>
 							{site.name}
 						</Typography>
 						<Typography sx={{ color: tokens.text.secondary, fontSize: 13 }}>{site.role}</Typography>
-						<Typography sx={{ color: tokens.text.muted, fontFamily: fonts.mono, fontSize: 11, mt: 0.25, letterSpacing: '0.06em' }}>
+						<Typography
+							sx={{
+								color: tokens.text.muted,
+								fontFamily: fonts.mono,
+								fontSize: 10,
+								mt: 0.25,
+								letterSpacing: '0.06em',
+							}}
+						>
 							{site.subRole}
 						</Typography>
 					</Box>
@@ -92,7 +105,7 @@ export function Sidebar() {
 					spacing={0.75}
 					sx={{
 						px: 1.25,
-						py: 0.75,
+						py: 0.6,
 						borderRadius: 999,
 						border: `1px solid rgba(198,255,61,0.3)`,
 						bgcolor: 'rgba(198,255,61,0.06)',
@@ -105,7 +118,7 @@ export function Sidebar() {
 					</Typography>
 				</Stack>
 
-				<Stack spacing={1} sx={{ mt: 0.5 }}>
+				<Stack spacing={0.75}>
 					<MetaRow icon={<LocationOnIcon sx={{ fontSize: 15 }} />} text={site.location} />
 					<MetaRow
 						icon={<EmailIcon sx={{ fontSize: 15 }} />}
@@ -121,7 +134,7 @@ export function Sidebar() {
 					<MetaRow icon={<PhoneIcon sx={{ fontSize: 15 }} />} text={site.phone} />
 				</Stack>
 
-				<Stack direction="row" spacing={0.5}>
+				<Stack direction="row" spacing={0.5} alignItems="center">
 					<IconButton
 						component={Link}
 						href={site.socials.github}
@@ -142,36 +155,54 @@ export function Sidebar() {
 					>
 						<LinkedInIcon fontSize="small" />
 					</IconButton>
+					<Box sx={{ flex: 1 }} />
+					<Button
+						variant="contained"
+						color="primary"
+						startIcon={<DescriptionIcon />}
+						component={Link}
+						href={resume}
+						target="_blank"
+						rel="noreferrer"
+						download
+						size="small"
+					>
+						CV
+					</Button>
 				</Stack>
+			</Box>
 
-				<Button
-					variant="contained"
-					color="primary"
-					startIcon={<DescriptionIcon />}
-					component={Link}
-					href={resume}
-					target="_blank"
-					rel="noreferrer"
-					download
-					fullWidth
-				>
-					Download CV
-				</Button>
+			<Divider sx={{ borderColor: tokens.line, display: { xs: 'none', md: 'block' } }} />
+
+			<Box sx={{ display: { xs: 'none', md: 'block' } }}>
+				<SectionNav />
 			</Box>
 
 			<Box
 				sx={{
 					mt: 'auto',
-					display: { xs: 'none', md: 'block' },
-					pt: 2,
-					fontFamily: fonts.mono,
-					fontSize: 10,
-					color: tokens.text.muted,
-					letterSpacing: '0.12em',
-					textTransform: 'uppercase',
+					display: { xs: 'none', md: 'flex' },
+					alignItems: 'flex-end',
+					justifyContent: 'space-between',
+					pt: 1,
+					gap: 1,
 				}}
 			>
-				<Box component="span" sx={{ color: tokens.primary }}>v0.2</Box> · built with react + mui
+				<MascotToon />
+				<Box
+					sx={{
+						fontFamily: fonts.mono,
+						fontSize: 9,
+						color: tokens.text.muted,
+						letterSpacing: '0.14em',
+						textTransform: 'uppercase',
+						textAlign: 'right',
+						pb: 0.5,
+					}}
+				>
+					<Box component="span" sx={{ color: tokens.primary }}>v0.2</Box>
+					<Box component="div">react · mui</Box>
+				</Box>
 			</Box>
 		</Box>
 	)

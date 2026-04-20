@@ -234,7 +234,7 @@ function MetaTag({ label, value }: { label: string; value: string }) {
 
 function HighlightsStrip() {
 	return (
-		<Box>
+		<Box component="section" id="signal">
 			<SectionLabel index="01" title="signal" />
 			<Grid container spacing={2}>
 				{highlights.map((h) => (
@@ -280,7 +280,7 @@ function HighlightsStrip() {
 function AboutSection() {
 	const doing = aboutData.doing
 	return (
-		<Box>
+		<Box component="section" id="about">
 			<SectionLabel index="02" title="about" />
 			<Grid container spacing={{ xs: 3, md: 5 }}>
 				<Grid item xs={12} md={6}>
@@ -339,7 +339,7 @@ function AboutSection() {
 
 function StackSection() {
 	return (
-		<Box>
+		<Box component="section" id="stack">
 			<SectionLabel index="03" title="stack" />
 			<Typography variant="h4" sx={{ mb: 3, fontSize: { xs: 28, md: 34 } }}>
 				Tools I reach for.
@@ -381,7 +381,7 @@ const projectGradients = [
 function WorkSection() {
 	const list = projects as Project[]
 	return (
-		<Box>
+		<Box component="section" id="work">
 			<SectionLabel index="04" title="selected work" />
 			<Typography variant="h4" sx={{ mb: 3, fontSize: { xs: 28, md: 34 } }}>
 				Signature projects.
@@ -389,21 +389,23 @@ function WorkSection() {
 			<Grid container spacing={2}>
 				{list.map((p, i) => (
 					<Grid key={p.title} item xs={12} md={6}>
-						<Link
-							href={p.link !== '#' ? p.link : p.repo}
-							target="_blank"
-							rel="noreferrer"
-							sx={{ display: 'block', height: '100%' }}
+						<Box
+							aria-disabled
+							sx={{
+								display: 'block',
+								height: '100%',
+								position: 'relative',
+								border: `1px solid ${tokens.line}`,
+								borderRadius: 2.5,
+								overflow: 'hidden',
+								bgcolor: tokens.surface,
+								transition: 'border-color 160ms ease, transform 160ms ease',
+								'&:hover': { borderColor: 'rgba(124,231,255,0.5)', transform: 'translateY(-2px)' },
+							}}
 						>
 							<Box
 								sx={{
 									height: '100%',
-									border: `1px solid ${tokens.line}`,
-									borderRadius: 2.5,
-									overflow: 'hidden',
-									bgcolor: tokens.surface,
-									transition: 'border-color 160ms ease, transform 160ms ease',
-									'&:hover': { borderColor: tokens.primary, transform: 'translateY(-2px)' },
 								}}
 							>
 								<Box
@@ -456,7 +458,22 @@ function WorkSection() {
 								<Box sx={{ p: 2.5 }}>
 									<Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
 										<Typography sx={{ fontWeight: 700, fontSize: 18 }}>{p.title}</Typography>
-										<NorthEastIcon sx={{ fontSize: 16, color: tokens.text.muted }} />
+										<Box
+											sx={{
+												ml: 'auto',
+												px: 1,
+												py: 0.25,
+												borderRadius: 999,
+												fontFamily: fonts.mono,
+												fontSize: 10,
+												letterSpacing: '0.14em',
+												color: tokens.text.muted,
+												border: `1px solid ${tokens.line}`,
+												textTransform: 'uppercase',
+											}}
+										>
+											case study soon
+										</Box>
 									</Stack>
 									<Typography variant="body2" sx={{ color: tokens.text.secondary, mb: 1.5 }}>
 										{p.summary}
@@ -468,7 +485,7 @@ function WorkSection() {
 									</Stack>
 								</Box>
 							</Box>
-						</Link>
+						</Box>
 					</Grid>
 				))}
 			</Grid>
@@ -478,7 +495,7 @@ function WorkSection() {
 
 function ExperienceSection() {
 	return (
-		<Box>
+		<Box component="section" id="experience">
 			<SectionLabel index="05" title="experience" />
 			<Typography variant="h4" sx={{ mb: 3, fontSize: { xs: 28, md: 34 } }}>
 				Where I've shipped.
@@ -490,7 +507,7 @@ function ExperienceSection() {
 
 function EducationSection() {
 	return (
-		<Box>
+		<Box component="section" id="education">
 			<SectionLabel index="06" title="education" />
 			<Grid container spacing={2}>
 				{(edu as Education[]).map((e) => (
@@ -534,6 +551,8 @@ function EducationSection() {
 function ContactCTA() {
 	return (
 		<Box
+			component="section"
+			id="contact"
 			sx={{
 				p: { xs: 4, md: 6 },
 				border: `1px solid ${tokens.line}`,

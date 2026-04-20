@@ -46,13 +46,20 @@ export const theme = createTheme({
 	components: {
 		MuiCssBaseline: {
 			styleOverrides: {
+				html: { scrollBehavior: 'smooth' },
 				body: {
 					backgroundColor: tokens.bg,
 					backgroundImage:
-						`radial-gradient(1200px 600px at 85% -10%, rgba(124,231,255,0.08), transparent 60%),` +
-						`radial-gradient(900px 500px at -10% 20%, rgba(255,176,46,0.05), transparent 60%)`,
+						`radial-gradient(1100px 650px at 88% -10%, rgba(124,231,255,0.12), transparent 60%),` +
+						`radial-gradient(900px 600px at -8% 25%, rgba(255,176,46,0.07), transparent 60%),` +
+						`radial-gradient(700px 500px at 50% 110%, rgba(198,255,61,0.06), transparent 60%),` +
+						`radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0),` +
+						`linear-gradient(180deg, ${tokens.bg} 0%, #080B11 100%)`,
+					backgroundSize: 'auto, auto, auto, 28px 28px, auto',
 					backgroundAttachment: 'fixed',
+					backgroundRepeat: 'no-repeat, no-repeat, no-repeat, repeat, no-repeat',
 				},
+				'section[id]': { scrollMarginTop: '24px' },
 				'*::selection': { background: 'rgba(124,231,255,0.25)' },
 			},
 		},
