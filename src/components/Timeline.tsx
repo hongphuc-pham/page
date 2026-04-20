@@ -1,4 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material'
+import { fonts, tokens } from '../theme'
 
 export interface TimelineItem {
 	range?: string
@@ -13,60 +14,105 @@ export interface TimelineItem {
 
 export function Timeline({ items }: { items: TimelineItem[] }) {
 	return (
-		<Stack spacing={3}>
+		<Stack spacing={0}>
 			{items.map((it, idx) => (
-				<Box key={idx} sx={{ position: 'relative', pl: 3, borderLeft: '2px solid', borderColor: 'primary.main' }}>
-					<Box sx={{ position: 'absolute', left: '-6px', top: 4, width: 10, height: 10, bgcolor: 'primary.main', borderRadius: '50%', border: '2px solid', borderColor: 'background.paper' }} />
-					{idx < items.length - 1 && (
-						<Box sx={{ position: 'absolute', left: '-1px', top: 14, width: 2, height: 'calc(100% + 12px)', bgcolor: 'primary.main' }} />
-					)}
+				<Box
+					key={idx}
+					sx={{
+						position: 'relative',
+						pl: { xs: 3, md: 4 },
+						pb: idx < items.length - 1 ? 4 : 0,
+						borderLeft: `1px solid ${tokens.line}`,
+					}}
+				>
+					<Box
+						sx={{
+							position: 'absolute',
+							left: -5,
+							top: 6,
+							width: 10,
+							height: 10,
+							borderRadius: '50%',
+							bgcolor: tokens.primary,
+							boxShadow: '0 0 0 4px rgba(124,231,255,0.12)',
+						}}
+					/>
+
 					{it.range && (
-						<Typography variant="caption" color="text.secondary">{it.range}</Typography>
+						<Typography
+							sx={{
+								fontFamily: fonts.mono,
+								fontSize: 11,
+								letterSpacing: '0.14em',
+								color: tokens.text.muted,
+								textTransform: 'uppercase',
+								mb: 0.5,
+							}}
+						>
+							{it.range}
+						</Typography>
 					)}
-					<Typography fontWeight={600} sx={{ color: 'primary.main' }}>{it.title}</Typography>
-					<Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>{[it.org, it.location].filter(Boolean).join(' — ')}</Typography>
-					{it.projects && it.projects.length > 0 && (
-						<Box sx={{ mt: 1 }}>
-							<Typography variant="subtitle2">Projects</Typography>
-							<ul>
-								{it.projects.map((p, i) => (
-									<li key={i}><Typography variant="body2">{p}</Typography></li>
-								))}
-							</ul>
-						</Box>
+					<Typography sx={{ fontFamily: fonts.display, fontWeight: 600, fontSize: 18, color: tokens.text.primary }}>
+						{it.title}
+					</Typography>
+					{(it.org || it.location) && (
+						<Typography variant="body2" sx={{ color: tokens.text.secondary, mb: 1.25 }}>
+							{[it.org, it.location].filter(Boolean).join(' · ')}
+						</Typography>
 					)}
+
 					{it.achievements && it.achievements.length > 0 && (
-						<Box sx={{ mt: 1 }}>
-							<Typography variant="subtitle2" fontWeight={700}>Achievements:</Typography>
-							<ul>
-								{it.achievements.map((p, i) => (
-									<li key={i}><Typography variant="body2">{p}</Typography></li>
-								))}
-							</ul>
-						</Box>
+						<BulletList label="Highlights" items={it.achievements} accent />
 					)}
 					{it.responsibilities && it.responsibilities.length > 0 && (
-						<Box sx={{ mt: 1 }}>
-							<Typography variant="subtitle2" fontWeight={700}>Responsibilities:</Typography>
-							<ul>
-								{it.responsibilities.map((p, i) => (
-									<li key={i}><Typography variant="body2">{p}</Typography></li>
-								))}
-							</ul>
-						</Box>
+						<BulletList label="What I did" items={it.responsibilities} />
+					)}
+					{it.projects && it.projects.length > 0 && (
+						<BulletList label="Projects" items={it.projects} />
 					)}
 					{it.awards && it.awards.length > 0 && (
-						<Box sx={{ mt: 1 }}>
-							<Typography variant="subtitle2">Awards</Typography>
-							<ul>
-								{it.awards.map((p, i) => (
-									<li key={i}><Typography variant="body2">{p}</Typography></li>
-								))}
-							</ul>
-						</Box>
+						<BulletList label="Awards" items={it.awards} />
 					)}
 				</Box>
 			))}
 		</Stack>
+	)
+}
+
+function BulletList({ label, items, accent }: { label: string; items: string[]; accent?: boolean }) {
+	return (
+		<Box sx={{ mt: 1.5 }}>
+			<Typography
+				sx={{
+					fontFamily: fonts.mono,
+					fontSize: 10,
+					letterSpacing: '0.14em',
+					textTransform: 'uppercase',
+					color: accent ? tokens.primary : tokens.text.muted,
+					mb: 0.75,
+				}}
+			>
+				{label}
+			</Typography>
+			<Stack spacing={0.75} component="ul" sx={{ m: 0, pl: 0, listStyle: 'none' }}>
+				{items.map((line, i) => (
+					<Stack key={i} direction="row" spacing={1} component="li">
+						<Box
+							sx={{
+								flexShrink: 0,
+								mt: '10px',
+								width: 4,
+								height: 4,
+								borderRadius: '50%',
+								bgcolor: accent ? tokens.primary : tokens.text.muted,
+							}}
+						/>
+						<Typography variant="body2" sx={{ color: tokens.text.secondary, lineHeight: 1.65 }}>
+							{line}
+						</Typography>
+					</Stack>
+				))}
+			</Stack>
+		</Box>
 	)
 }

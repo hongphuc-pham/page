@@ -47,3 +47,11 @@ coverage/
 
 # Misc
 *.local
+
+# agent output
+.claude/
+.cursor/
+.mcp.json
+docs/
+plans/
+public/reference/

@@ -1,13 +1,16 @@
 {
-	"languages": ["Python","JavaScript","TypeScript","Java"],
-	"frontend_fullstack": ["React","Next.js","Node.js","Expo","FastAPI"],
-	"databases": ["PostgreSQL","MongoDB","Neo4j","Milvus","MinIO"],
-	"tools": ["Docker","Portainer","Git","Bash","PowerShell","Ollama","RAG","TensorFlow","PyTorch","Android Studio"],
-	"soft": ["Time management","Problem solving","Independence","Teamwork","Prompting & research"],
+	"languages": ["Python", "JavaScript", "TypeScript", "SQL", "Java", "Bash"],
+	"frontend_fullstack": ["React", "Next.js", "React Native", "Node.js", "FastAPI", "Spring Boot", "REST APIs", "Microservices", "Integration services"],
+	"databases": ["PostgreSQL", "MS SQL Server", "MongoDB", "Oracle DB", "Neo4j", "Milvus", "Data modelling"],
+	"infrastructure": ["Docker", "Kubernetes", "OpenShift", "OpenStack", "CI/CD", "GitHub Actions", "Git"],
+	"ai_ml": ["LLM integration", "RAG", "Data pipelines", "Model fine-tuning", "Ollama", "PyTorch", "TensorFlow"],
+	"tools": ["Docker", "Portainer", "Git", "Bash", "PowerShell", "Android Studio"],
+	"soft": ["Full SDLC", "Stakeholder comms", "Technical documentation", "Peer review", "Mentoring", "Cross-team collaboration", "Log investigation & debugging"],
 	"bars": [
-		{"name":"Web Development","value":90},
-		{"name":"Mobile Apps","value":80},
-		{"name":"ML & RAG","value":80},
-		{"name":"Branding/Design","value":70}
+		{ "name": "Web & Full-Stack", "value": 90 },
+		{ "name": "Backend APIs & Data", "value": 88 },
+		{ "name": "AI / LLM integration", "value": 82 },
+		{ "name": "Mobile (RN / Expo)", "value": 78 },
+		{ "name": "Platform / DevOps", "value": 75 }
 	]
 }

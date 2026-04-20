@@ -1,63 +1,121 @@
 import { createTheme } from '@mui/material/styles'
 
-const tokens = {
-	bg: '#0f1115',
-	surface: '#171a21',
-	card: '#1f232b',
-	text: { primary: '#e6eaf2', secondary: '#b0b6c3', muted: '#8a90a0' },
-	accent: '#ffb02e',
+export const tokens = {
+	bg: '#0A0D14',
+	bgElevated: '#0E131C',
+	surface: '#12161F',
+	card: '#161B26',
+	line: 'rgba(255,255,255,0.08)',
+	lineSoft: 'rgba(255,255,255,0.04)',
+	text: { primary: '#EDF1F7', secondary: '#A4ACBD', muted: '#6B7388' },
+	primary: '#7CE7FF',
+	accent: '#FFB02E',
+	lime: '#C6FF3D',
+	danger: '#FF6B6B',
+	gradient: 'linear-gradient(135deg, #7CE7FF 0%, #C6FF3D 100%)',
+}
+
+export const fonts = {
+	display: '"Space Grotesk", Inter, system-ui, sans-serif',
+	body: 'Inter, system-ui, -apple-system, "Segoe UI", sans-serif',
+	mono: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
 }
 
 export const theme = createTheme({
 	palette: {
 		mode: 'dark',
 		background: { default: tokens.bg, paper: tokens.surface },
-		primary: { main: tokens.accent },
+		primary: { main: tokens.primary, contrastText: '#06121A' },
+		secondary: { main: tokens.accent, contrastText: '#1A1200' },
 		text: { primary: tokens.text.primary, secondary: tokens.text.secondary },
+		divider: tokens.line,
 	},
-	shape: { borderRadius: 16 },
+	shape: { borderRadius: 14 },
+	typography: {
+		fontFamily: fonts.body,
+		h1: { fontFamily: fonts.display, fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.02 },
+		h2: { fontFamily: fonts.display, fontWeight: 700, letterSpacing: '-0.025em', lineHeight: 1.05 },
+		h3: { fontFamily: fonts.display, fontWeight: 600, letterSpacing: '-0.02em' },
+		h4: { fontFamily: fonts.display, fontWeight: 600, letterSpacing: '-0.015em' },
+		h5: { fontFamily: fonts.display, fontWeight: 600, letterSpacing: '-0.01em' },
+		h6: { fontFamily: fonts.display, fontWeight: 600, letterSpacing: '-0.005em' },
+		subtitle2: { fontWeight: 600 },
+		button: { fontWeight: 600, letterSpacing: '0.01em' },
+		overline: { fontFamily: fonts.mono, fontWeight: 500, letterSpacing: '0.14em' },
+	},
 	components: {
-		MuiPaper: {
+		MuiCssBaseline: {
 			styleOverrides: {
-				root: {
-					backgroundColor: tokens.card,
-					boxShadow:
-						'0 1px 1px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.35)',
-					transition: 'transform 120ms ease, box-shadow 120ms ease',
-					'&:hover': {
-						transform: 'translateY(-1px)',
-						boxShadow:
-							'0 2px 2px rgba(0,0,0,0.45), 0 16px 40px rgba(0,0,0,0.45)',
-					},
+				body: {
+					backgroundColor: tokens.bg,
+					backgroundImage:
+						`radial-gradient(1200px 600px at 85% -10%, rgba(124,231,255,0.08), transparent 60%),` +
+						`radial-gradient(900px 500px at -10% 20%, rgba(255,176,46,0.05), transparent 60%)`,
+					backgroundAttachment: 'fixed',
 				},
+				'*::selection': { background: 'rgba(124,231,255,0.25)' },
 			},
 		},
-		MuiTabs: {
+		MuiPaper: {
+			defaultProps: { elevation: 0 },
 			styleOverrides: {
-				root: { minHeight: 48 },
-				indicator: { height: 3, borderRadius: 3, background: tokens.accent },
+				root: {
+					backgroundColor: tokens.surface,
+					backgroundImage: 'none',
+					border: `1px solid ${tokens.line}`,
+					boxShadow: 'none',
+					transition: 'transform 160ms ease, border-color 160ms ease',
+				},
 			},
 		},
 		MuiChip: {
 			styleOverrides: {
-				root: { backgroundColor: tokens.surface },
-			},
-		},
-		MuiLinearProgress: {
-			styleOverrides: {
-				root: { height: 8, borderRadius: 999 },
-				bar: { borderRadius: 999, background: tokens.accent },
+				root: {
+					backgroundColor: tokens.card,
+					border: `1px solid ${tokens.line}`,
+					fontFamily: fonts.mono,
+					fontSize: 12,
+					letterSpacing: '0.02em',
+					borderRadius: 8,
+				},
+				colorPrimary: {
+					backgroundColor: 'rgba(124,231,255,0.08)',
+					borderColor: 'rgba(124,231,255,0.35)',
+					color: tokens.primary,
+				},
 			},
 		},
 		MuiButton: {
 			styleOverrides: {
 				root: {
 					textTransform: 'none',
-					borderRadius: 12,
-					'&:focus-visible': {
-						boxShadow: `0 0 0 3px rgba(255,176,46,0.35)`,
-					},
+					borderRadius: 10,
+					fontWeight: 600,
+					paddingInline: 18,
+					paddingBlock: 10,
 				},
+				containedPrimary: {
+					backgroundColor: tokens.primary,
+					color: '#06121A',
+					'&:hover': { backgroundColor: '#5ED3EE' },
+				},
+				outlinedPrimary: {
+					borderColor: tokens.line,
+					color: tokens.text.primary,
+					'&:hover': { borderColor: tokens.primary, backgroundColor: 'rgba(124,231,255,0.06)' },
+				},
+			},
+		},
+		MuiLinearProgress: {
+			styleOverrides: {
+				root: { height: 6, borderRadius: 999, backgroundColor: tokens.card },
+				bar: { borderRadius: 999, background: tokens.gradient },
+			},
+		},
+		MuiDivider: { styleOverrides: { root: { borderColor: tokens.line } } },
+		MuiTabs: {
+			styleOverrides: {
+				indicator: { height: 2, borderRadius: 2, background: tokens.primary },
 			},
 		},
 	},
