@@ -5,7 +5,16 @@ import { Home } from './pages/Home'
 
 function Layout() {
 	return (
-		<Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, width: '100%', minHeight: '100dvh' }}>
+		<Box
+			sx={{
+				position: 'relative',
+				zIndex: 1,
+				display: 'flex',
+				flexDirection: { xs: 'column', md: 'row' },
+				width: '100%',
+				minHeight: '100dvh',
+			}}
+		>
 			<Sidebar />
 			<Box
 				component="main"
