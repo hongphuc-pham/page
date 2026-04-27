@@ -15,6 +15,7 @@ import skills from '../data/skills.json'
 import exp from '../data/experience.json'
 import edu from '../data/education.json'
 import projects from '../data/projects.json'
+import showcase from '../data/showcase.json'
 import resumeDocx from '../assets/Phuc_Pham-CV-0401766596.docx'
 
 type Doing = { icon: string; title: string; text: string }
@@ -26,8 +27,25 @@ type Skills = {
 	infrastructure: string[]
 	ai_ml: string[]
 }
-type Project = { title: string; category: string; summary: string; tech: string[]; link: string; repo: string }
+type Project = { title: string; category: string; org?: string; summary: string; tech: string[]; link: string; repo: string }
 type Education = { title: string; org: string; range?: string; projects?: string[]; awards?: string[] }
+type ShowcaseLink = { label: string; url: string; icon: string }
+type ShowcaseItem = {
+	id: string
+	name: string
+	tagline: string
+	summary: string
+	tech: string[]
+	status: string
+	kind: 'web' | 'mobile' | 'internal'
+	primary?: ShowcaseLink
+	links?: ShowcaseLink[]
+	displayUrl: string
+	image?: string
+	gradient: string
+	accent: string
+	initials: string
+}
 
 const skillData = skills as Skills
 const aboutData = about as About
@@ -54,8 +72,9 @@ export function Home() {
 			<HighlightsStrip />
 			<AboutSection />
 			<StackSection />
-			<WorkSection />
+			<ShowcaseSection />
 			<ExperienceSection />
+			<WorkSection />
 			<EducationSection />
 			<ContactCTA />
 		</Stack>
@@ -371,125 +390,539 @@ function StackSection() {
 	)
 }
 
-const projectGradients = [
-	'linear-gradient(135deg, rgba(124,231,255,0.25), rgba(198,255,61,0.15))',
-	'linear-gradient(135deg, rgba(255,176,46,0.22), rgba(124,231,255,0.12))',
-	'linear-gradient(135deg, rgba(198,255,61,0.22), rgba(255,176,46,0.12))',
-	'linear-gradient(135deg, rgba(124,231,255,0.2), rgba(255,107,107,0.14))',
-]
-
 function WorkSection() {
 	const list = projects as Project[]
 	return (
 		<Box component="section" id="work">
-			<SectionLabel index="04" title="selected work" />
-			<Typography variant="h4" sx={{ mb: 3, fontSize: { xs: 28, md: 34 } }}>
-				Signature projects.
-			</Typography>
-			<Grid container spacing={2}>
+			<SectionLabel index="06" title="selected work" />
+			<Stack
+				direction={{ xs: 'column', sm: 'row' }}
+				justifyContent="space-between"
+				alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
+				spacing={1.5}
+				sx={{ mb: 3 }}
+			>
+				<Typography variant="h4" sx={{ fontSize: { xs: 28, md: 34 }, maxWidth: 720 }}>
+					Signature projects.
+				</Typography>
+				<Typography
+					sx={{
+						fontFamily: fonts.mono,
+						fontSize: 11,
+						letterSpacing: '0.18em',
+						color: tokens.text.muted,
+						textTransform: 'uppercase',
+						pb: { sm: 1 },
+					}}
+				>
+					case studies coming soon
+				</Typography>
+			</Stack>
+			<Box
+				sx={{
+					border: `1px solid ${tokens.line}`,
+					borderRadius: 2.5,
+					bgcolor: tokens.surface,
+					overflow: 'hidden',
+				}}
+			>
 				{list.map((p, i) => (
-					<Grid key={p.title} item xs={12} md={6}>
-						<Box
-							aria-disabled
-							sx={{
-								display: 'block',
-								height: '100%',
-								position: 'relative',
-								border: `1px solid ${tokens.line}`,
-								borderRadius: 2.5,
-								overflow: 'hidden',
-								bgcolor: tokens.surface,
-								transition: 'border-color 160ms ease, transform 160ms ease',
-								'&:hover': { borderColor: 'rgba(124,231,255,0.5)', transform: 'translateY(-2px)' },
-							}}
-						>
-							<Box
-								sx={{
-									height: '100%',
-								}}
-							>
-								<Box
-									sx={{
-										aspectRatio: '16 / 8',
-										background: projectGradients[i % projectGradients.length],
-										position: 'relative',
-										overflow: 'hidden',
-										borderBottom: `1px solid ${tokens.line}`,
-									}}
-								>
-									<Box
-										sx={{
-											position: 'absolute',
-											inset: 0,
-											backgroundImage:
-												'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.06) 0, transparent 40%), ' +
-												'linear-gradient(135deg, transparent 48%, rgba(255,255,255,0.04) 50%, transparent 52%)',
-										}}
-									/>
-									<Typography
-										sx={{
-											position: 'absolute',
-											top: 16,
-											left: 16,
-											fontFamily: fonts.mono,
-											fontSize: 11,
-											letterSpacing: '0.18em',
-											color: tokens.text.primary,
-											textTransform: 'uppercase',
-										}}
-									>
-										{String(i + 1).padStart(2, '0')} / {p.category}
-									</Typography>
-									<Typography
-										sx={{
-											position: 'absolute',
-											bottom: 16,
-											right: 20,
-											fontFamily: fonts.display,
-											fontSize: { xs: 40, md: 56 },
-											fontWeight: 700,
-											color: 'rgba(255,255,255,0.08)',
-											letterSpacing: '-0.03em',
-										}}
-									>
-										{p.title.split(' ').map((w) => w[0]).join('').slice(0, 3)}
-									</Typography>
-								</Box>
-								<Box sx={{ p: 2.5 }}>
-									<Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
-										<Typography sx={{ fontWeight: 700, fontSize: 18 }}>{p.title}</Typography>
-										<Box
-											sx={{
-												ml: 'auto',
-												px: 1,
-												py: 0.25,
-												borderRadius: 999,
-												fontFamily: fonts.mono,
-												fontSize: 10,
-												letterSpacing: '0.14em',
-												color: tokens.text.muted,
-												border: `1px solid ${tokens.line}`,
-												textTransform: 'uppercase',
-											}}
-										>
-											case study soon
-										</Box>
-									</Stack>
-									<Typography variant="body2" sx={{ color: tokens.text.secondary, mb: 1.5 }}>
-										{p.summary}
-									</Typography>
-									<Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-										{p.tech.map((t) => (
-											<Chip key={t} label={t} size="small" />
-										))}
-									</Stack>
-								</Box>
-							</Box>
-						</Box>
+					<WorkRow key={p.title} project={p} index={i + 1} divider={i < list.length - 1} />
+				))}
+			</Box>
+		</Box>
+	)
+}
+
+function WorkRow({ project, index, divider }: { project: Project; index: number; divider: boolean }) {
+	return (
+		<Box
+			sx={{
+				p: { xs: 2.25, md: 3 },
+				display: 'grid',
+				gridTemplateColumns: { xs: '36px 1fr', md: '56px 1fr 200px' },
+				columnGap: { xs: 1.75, md: 3 },
+				rowGap: 1.25,
+				alignItems: 'baseline',
+				borderBottom: divider ? `1px solid ${tokens.line}` : 'none',
+				transition: 'background 200ms ease',
+				'&:hover': { background: 'rgba(124,231,255,0.03)' },
+			}}
+		>
+			<Typography
+				sx={{
+					fontFamily: fonts.mono,
+					fontSize: { xs: 12, md: 13 },
+					letterSpacing: '0.14em',
+					color: tokens.primary,
+					fontWeight: 600,
+				}}
+			>
+				{String(index).padStart(2, '0')}
+			</Typography>
+
+			<Box sx={{ minWidth: 0 }}>
+				<Stack direction="row" alignItems="baseline" spacing={1.25} flexWrap="wrap" sx={{ mb: 0.75 }}>
+					<Typography sx={{ fontWeight: 700, fontSize: { xs: 18, md: 20 }, letterSpacing: '-0.01em' }}>
+						{project.title}
+					</Typography>
+					<Typography
+						sx={{
+							fontFamily: fonts.mono,
+							fontSize: 10,
+							letterSpacing: '0.16em',
+							color: tokens.text.muted,
+							textTransform: 'uppercase',
+							display: { xs: 'inline', md: 'none' },
+						}}
+					>
+						{project.category}
+						{project.org && ` · ${project.org}`}
+					</Typography>
+				</Stack>
+				<Typography
+					variant="body2"
+					sx={{ color: tokens.text.secondary, mb: 1.25, lineHeight: 1.65, maxWidth: 720 }}
+				>
+					{project.summary}
+				</Typography>
+				<Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
+					{project.tech.map((t) => (
+						<Chip key={t} label={t} size="small" />
+					))}
+				</Stack>
+			</Box>
+
+			<Stack
+				spacing={0.75}
+				alignItems="flex-end"
+				sx={{ display: { xs: 'none', md: 'flex' } }}
+			>
+				<Typography
+					sx={{
+						fontFamily: fonts.mono,
+						fontSize: 10,
+						letterSpacing: '0.16em',
+						color: tokens.text.muted,
+						textTransform: 'uppercase',
+					}}
+				>
+					{project.category}
+				</Typography>
+				{project.org && (
+					<Typography
+						sx={{
+							fontFamily: fonts.mono,
+							fontSize: 10,
+							letterSpacing: '0.12em',
+							color: tokens.primary,
+							textTransform: 'uppercase',
+							textAlign: 'right',
+						}}
+					>
+						{project.org}
+					</Typography>
+				)}
+				<Box
+					sx={{
+						px: 1,
+						py: 0.25,
+						borderRadius: 999,
+						fontFamily: fonts.mono,
+						fontSize: 10,
+						letterSpacing: '0.14em',
+						color: tokens.text.muted,
+						border: `1px solid ${tokens.line}`,
+						textTransform: 'uppercase',
+					}}
+				>
+					case study soon
+				</Box>
+			</Stack>
+		</Box>
+	)
+}
+
+function ShowcaseSection() {
+	const items = showcase as ShowcaseItem[]
+	return (
+		<Box component="section" id="live">
+			<SectionLabel index="04" title="live & shipping" />
+			<Stack
+				direction={{ xs: 'column', sm: 'row' }}
+				justifyContent="space-between"
+				alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
+				spacing={1.5}
+				sx={{ mb: 3 }}
+			>
+				<Typography variant="h4" sx={{ fontSize: { xs: 28, md: 34 }, maxWidth: 720 }}>
+					Products you can visit, install, or read about today.
+				</Typography>
+				<Typography
+					sx={{
+						fontFamily: fonts.mono,
+						fontSize: 11,
+						letterSpacing: '0.18em',
+						color: tokens.text.muted,
+						textTransform: 'uppercase',
+						pb: { sm: 1 },
+					}}
+				>
+					{items.length} live surfaces
+				</Typography>
+			</Stack>
+			<Grid container spacing={2.5}>
+				{items.map((it) => (
+					<Grid key={it.id} item xs={12} md={6}>
+						<ShowcaseCard item={it} />
 					</Grid>
 				))}
 			</Grid>
 		</Box>
+	)
+}
+
+function ShowcaseCard({ item }: { item: ShowcaseItem }) {
+	const isMobile = item.kind === 'mobile'
+	const isInternal = item.kind === 'internal'
+	const StatusDot = isInternal ? Icons.Lock : Icons.FiberManualRecord
+	return (
+		<Box
+			sx={{
+				position: 'relative',
+				height: '100%',
+				display: 'flex',
+				flexDirection: 'column',
+				border: `1px solid ${tokens.line}`,
+				borderRadius: 3,
+				overflow: 'hidden',
+				bgcolor: tokens.surface,
+				transition: 'border-color 220ms ease, transform 220ms ease, box-shadow 220ms ease',
+				'&:hover': {
+					borderColor: `${item.accent}66`,
+					transform: 'translateY(-3px)',
+					boxShadow: `0 18px 44px -28px ${item.accent}55`,
+				},
+				'&:hover .showcase-hero img': {
+					transform: 'scale(1.04)',
+				},
+			}}
+		>
+			<ChromeBar item={item} isMobile={isMobile} />
+
+			<Box
+				className="showcase-hero"
+				sx={{
+					position: 'relative',
+					aspectRatio: '16 / 9',
+					background: item.gradient,
+					overflow: 'hidden',
+					borderBottom: `1px solid ${tokens.line}`,
+				}}
+			>
+				{item.image && (
+					<Box
+						component="img"
+						src={item.image}
+						alt={`${item.name} preview`}
+						loading="lazy"
+						sx={{
+							position: 'absolute',
+							inset: 0,
+							width: '100%',
+							height: '100%',
+							objectFit: 'cover',
+							objectPosition: 'top center',
+							display: 'block',
+							transition: 'transform 700ms cubic-bezier(.2,.7,.2,1)',
+							filter: 'saturate(1.05) contrast(1.02)',
+						}}
+					/>
+				)}
+				<Box
+					aria-hidden
+					sx={{
+						position: 'absolute',
+						inset: 0,
+						background:
+							'linear-gradient(180deg, rgba(7,10,18,0.55) 0%, rgba(7,10,18,0) 22%, rgba(7,10,18,0) 55%, rgba(7,10,18,0.85) 100%)',
+					}}
+				/>
+				<Box
+					aria-hidden
+					sx={{
+						position: 'absolute',
+						inset: 0,
+						backgroundImage:
+							'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),' +
+							'linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)',
+						backgroundSize: '36px 36px',
+						maskImage: 'radial-gradient(ellipse at 70% 90%, black 25%, transparent 75%)',
+						WebkitMaskImage: 'radial-gradient(ellipse at 70% 90%, black 25%, transparent 75%)',
+						opacity: 0.35,
+						mixBlendMode: 'overlay',
+					}}
+				/>
+
+				<Stack
+					direction="row"
+					spacing={0.75}
+					sx={{
+						position: 'absolute',
+						top: 14,
+						left: 16,
+						alignItems: 'center',
+						px: 1.1,
+						py: 0.45,
+						borderRadius: 999,
+						bgcolor: 'rgba(7,10,18,0.55)',
+						backdropFilter: 'blur(8px)',
+						border: `1px solid rgba(255,255,255,0.10)`,
+					}}
+				>
+					<StatusDot
+						sx={{
+							fontSize: isInternal ? 11 : 9,
+							color: isInternal ? tokens.accent : tokens.lime,
+						}}
+					/>
+					<Typography
+						sx={{
+							fontFamily: fonts.mono,
+							fontSize: 10,
+							letterSpacing: '0.14em',
+							color: tokens.text.primary,
+							textTransform: 'uppercase',
+						}}
+					>
+						{item.status}
+					</Typography>
+				</Stack>
+
+				<Box
+					sx={{
+						position: 'absolute',
+						top: 14,
+						right: 16,
+						px: 1.1,
+						py: 0.45,
+						borderRadius: 999,
+						bgcolor: 'rgba(7,10,18,0.55)',
+						backdropFilter: 'blur(8px)',
+						border: `1px solid rgba(255,255,255,0.10)`,
+					}}
+				>
+					<Typography
+						sx={{
+							fontFamily: fonts.mono,
+							fontSize: 10,
+							letterSpacing: '0.18em',
+							color: tokens.text.primary,
+							textTransform: 'uppercase',
+						}}
+					>
+						{item.kind === 'web' ? 'Web · Live' : item.kind === 'mobile' ? 'iOS · Android' : 'Internal · Private'}
+					</Typography>
+				</Box>
+
+				{!item.image && (
+					<Box sx={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
+						<Typography
+							sx={{
+								fontFamily: fonts.display,
+								fontSize: { xs: 88, md: 112 },
+								fontWeight: 800,
+								letterSpacing: '-0.04em',
+								color: 'rgba(255,255,255,0.10)',
+								lineHeight: 1,
+								userSelect: 'none',
+							}}
+						>
+							{item.initials}
+						</Typography>
+					</Box>
+				)}
+
+				<Typography
+					sx={{
+						position: 'absolute',
+						bottom: 14,
+						left: 16,
+						right: 16,
+						fontFamily: fonts.mono,
+						fontSize: 11,
+						letterSpacing: '0.06em',
+						color: 'rgba(255,255,255,0.82)',
+					}}
+				>
+					{item.displayUrl}
+				</Typography>
+			</Box>
+
+			<Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 1.5, flex: 1 }}>
+				<Stack direction="row" alignItems="baseline" spacing={1.25} flexWrap="wrap">
+					<Typography sx={{ fontWeight: 700, fontSize: 22, letterSpacing: '-0.01em' }}>{item.name}</Typography>
+					<Typography
+						sx={{
+							fontFamily: fonts.mono,
+							fontSize: 11,
+							letterSpacing: '0.12em',
+							color: item.accent,
+							textTransform: 'uppercase',
+						}}
+					>
+						{item.tagline}
+					</Typography>
+				</Stack>
+
+				<Typography variant="body2" sx={{ color: tokens.text.secondary, lineHeight: 1.65 }}>
+					{item.summary}
+				</Typography>
+
+				<Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 0.5 }}>
+					{item.tech.map((t) => (
+						<Chip key={t} label={t} size="small" />
+					))}
+				</Stack>
+
+				<Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.25} sx={{ mt: 'auto', pt: 1.5 }}>
+					{item.primary && <ShowcaseCta link={item.primary} accent={item.accent} primary />}
+					{item.links?.map((l, idx) => (
+						<ShowcaseCta key={l.url} link={l} accent={item.accent} primary={idx === 0 && !item.primary} />
+					))}
+				</Stack>
+			</Box>
+		</Box>
+	)
+}
+
+function ChromeBar({ item, isMobile }: { item: ShowcaseItem; isMobile: boolean }) {
+	if (isMobile) {
+		return (
+			<Stack
+				direction="row"
+				alignItems="center"
+				spacing={1}
+				sx={{
+					px: 2,
+					py: 1.1,
+					borderBottom: `1px solid ${tokens.line}`,
+					bgcolor: 'rgba(7,10,18,0.65)',
+				}}
+			>
+				<Icons.Apple sx={{ fontSize: 14, color: tokens.text.muted }} />
+				<Icons.Android sx={{ fontSize: 14, color: tokens.text.muted }} />
+				<Box sx={{ flex: 1 }} />
+				<Typography
+					sx={{
+						fontFamily: fonts.mono,
+						fontSize: 10,
+						letterSpacing: '0.14em',
+						color: tokens.text.muted,
+						textTransform: 'uppercase',
+					}}
+				>
+					mobile · cross-platform
+				</Typography>
+			</Stack>
+		)
+	}
+	return (
+		<Stack
+			direction="row"
+			alignItems="center"
+			spacing={1.25}
+			sx={{
+				px: 2,
+				py: 1.1,
+				borderBottom: `1px solid ${tokens.line}`,
+				bgcolor: 'rgba(7,10,18,0.65)',
+			}}
+		>
+			<Stack direction="row" spacing={0.6}>
+				{['#FF6B6B', '#FFB02E', '#C6FF3D'].map((c) => (
+					<Box key={c} sx={{ width: 9, height: 9, borderRadius: '50%', bgcolor: `${c}99` }} />
+				))}
+			</Stack>
+			<Box
+				sx={{
+					flex: 1,
+					px: 1.25,
+					py: 0.5,
+					borderRadius: 999,
+					border: `1px solid ${tokens.line}`,
+					bgcolor: 'rgba(255,255,255,0.02)',
+					display: 'flex',
+					alignItems: 'center',
+					gap: 0.75,
+					minWidth: 0,
+				}}
+			>
+				<Icons.LockOutlined sx={{ fontSize: 11, color: tokens.text.muted }} />
+				<Typography
+					noWrap
+					sx={{
+						fontFamily: fonts.mono,
+						fontSize: 11,
+						color: tokens.text.secondary,
+						letterSpacing: '0.02em',
+					}}
+				>
+					https://{item.displayUrl}
+				</Typography>
+			</Box>
+		</Stack>
+	)
+}
+
+function ShowcaseCta({
+	link,
+	accent,
+	primary,
+}: {
+	link: ShowcaseLink
+	accent: string
+	primary: boolean
+}) {
+	const Icon = (Icons as unknown as Record<string, typeof Icons.Api>)[link.icon] ?? Icons.OpenInNew
+	if (primary) {
+		return (
+			<Button
+				variant="contained"
+				component={Link}
+				href={link.url}
+				target="_blank"
+				rel="noreferrer"
+				startIcon={<Icon sx={{ fontSize: 18 }} />}
+				endIcon={<NorthEastIcon sx={{ fontSize: 16 }} />}
+				sx={{
+					bgcolor: accent,
+					color: '#06121A',
+					'&:hover': { bgcolor: accent, filter: 'brightness(0.92)' },
+				}}
+			>
+				{link.label}
+			</Button>
+		)
+	}
+	return (
+		<Button
+			variant="outlined"
+			color="primary"
+			component={Link}
+			href={link.url}
+			target="_blank"
+			rel="noreferrer"
+			startIcon={<Icon sx={{ fontSize: 18 }} />}
+			endIcon={<NorthEastIcon sx={{ fontSize: 16 }} />}
+			sx={{
+				borderColor: tokens.line,
+				color: tokens.text.primary,
+				'&:hover': { borderColor: accent, backgroundColor: `${accent}10` },
+			}}
+		>
+			{link.label}
+		</Button>
 	)
 }
 
@@ -508,7 +941,7 @@ function ExperienceSection() {
 function EducationSection() {
 	return (
 		<Box component="section" id="education">
-			<SectionLabel index="06" title="education" />
+			<SectionLabel index="07" title="education" />
 			<Grid container spacing={2}>
 				{(edu as Education[]).map((e) => (
 					<Grid key={e.title} item xs={12} md={6}>

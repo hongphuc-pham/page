@@ -1,0 +1,65 @@
+[
+	{
+		"id": "elevexai",
+		"name": "ElevexAI",
+		"tagline": "AI research lab — products, insights, capital.",
+		"summary": "Marketing and product surface for ElevexAI's portfolio. Headless content via Sanity, edge-rendered with Next.js, deployed on Vercel with preview branches per feature.",
+		"tech": ["Next.js", "Sanity CMS", "Vercel", "TypeScript"],
+		"status": "Live",
+		"kind": "web",
+		"primary": { "label": "Visit elevexai.systems", "url": "https://www.elevexai.systems/", "icon": "Language" },
+		"displayUrl": "elevexai.systems",
+		"image": "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fwww.elevexai.systems%2F?w=1280&h=720",
+		"gradient": "linear-gradient(135deg, rgba(124,231,255,0.55) 0%, rgba(74,144,255,0.35) 100%)",
+		"accent": "#7CE7FF",
+		"initials": "EX"
+	},
+	{
+		"id": "ssi",
+		"name": "SoftSec Intel",
+		"tagline": "RAG-powered software-security companion.",
+		"summary": "Mobile companion for security teams — multi-source RAG over CVE & advisory feeds combining vector, graph, and relational stores. Pipelines orchestrated with Prefect; LLM query layer for natural-language threat lookup.",
+		"tech": ["LLM RAG", "Prefect", "PostgreSQL", "Vector DB", "Graph DB", "iOS", "Android"],
+		"status": "Live",
+		"kind": "mobile",
+		"links": [
+			{ "label": "App Store", "url": "https://apps.apple.com/au/app/softsec-intel/id6762328734", "icon": "Apple" },
+			{ "label": "Google Play", "url": "https://play.google.com/store/apps/details?id=com.mssi.app&hl=en_AU", "icon": "Android" }
+		],
+		"displayUrl": "softsec-intel · iOS + Android",
+		"image": "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fapps.apple.com%2Fau%2Fapp%2Fsoftsec-intel%2Fid6762328734?w=1280&h=720",
+		"gradient": "linear-gradient(135deg, rgba(198,255,61,0.45) 0%, rgba(111,168,45,0.28) 100%)",
+		"accent": "#C6FF3D",
+		"initials": "SSI"
+	},
+	{
+		"id": "aidfest",
+		"name": "AIDFest",
+		"tagline": "Adelaide AI · Data · Festival.",
+		"summary": "Festival platform for Adelaide's AI and data community — event programming, speaker showcase, and registration. Built for fast iteration during a live programming cycle.",
+		"tech": ["Next.js", "Vercel", "TypeScript"],
+		"status": "Live",
+		"kind": "web",
+		"primary": { "label": "Visit aidfest.tech", "url": "https://www.aidfest.tech/", "icon": "Language" },
+		"displayUrl": "aidfest.tech",
+		"image": "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fwww.aidfest.tech%2F?w=1280&h=720",
+		"gradient": "linear-gradient(135deg, rgba(255,176,46,0.50) 0%, rgba(255,107,107,0.30) 100%)",
+		"accent": "#FFB02E",
+		"initials": "AID"
+	},
+	{
+		"id": "dep-vip",
+		"name": "DEP & VIP",
+		"tagline": "Data-science PaaS at CREST.",
+		"summary": "Internal Platform-as-a-Service at the University of Adelaide CREST. Gives data scientists a managed environment for everyday research work — no infrastructure to provision, no env to wrangle. Featured on ElevexAI's products page.",
+		"tech": ["Platform-as-a-Service", "Data Science", "Internal", "CREST · UofA"],
+		"status": "Internal · CREST",
+		"kind": "internal",
+		"primary": { "label": "Featured on elevexai.systems/products", "url": "https://www.elevexai.systems/products", "icon": "Lock" },
+		"displayUrl": "elevexai.systems/products",
+		"image": "https://s.wordpress.com/mshots/v1/https%3A%2F%2Fwww.elevexai.systems%2Fproducts?w=1280&h=720",
+		"gradient": "linear-gradient(135deg, rgba(180,130,255,0.45) 0%, rgba(124,231,255,0.22) 100%)",
+		"accent": "#B482FF",
+		"initials": "DV"
+	}
+]

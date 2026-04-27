@@ -40,6 +40,9 @@ export function Sidebar() {
 				flexDirection: 'column',
 				gap: 2,
 				overflowY: { md: 'auto' },
+				scrollbarWidth: 'none',
+				msOverflowStyle: 'none',
+				'&::-webkit-scrollbar': { width: 0, height: 0, display: 'none' },
 			}}
 		>
 			<Box

@@ -96,18 +96,34 @@ function BulletList({ label, items, accent }: { label: string; items: string[]; 
 			</Typography>
 			<Stack spacing={0.75} component="ul" sx={{ m: 0, pl: 0, listStyle: 'none' }}>
 				{items.map((line, i) => (
-					<Stack key={i} direction="row" spacing={1} component="li">
+					<Stack
+						key={i}
+						direction="row"
+						spacing={1.25}
+						component="li"
+						sx={{ alignItems: 'flex-start', m: 0 }}
+					>
 						<Box
 							sx={{
 								flexShrink: 0,
-								mt: '10px',
-								width: 4,
-								height: 4,
-								borderRadius: '50%',
-								bgcolor: accent ? tokens.primary : tokens.text.muted,
+								fontSize: 14,
+								height: '1.65em',
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								width: 10,
 							}}
-						/>
-						<Typography variant="body2" sx={{ color: tokens.text.secondary, lineHeight: 1.65 }}>
+						>
+							<Box
+								sx={{
+									width: 5,
+									height: 5,
+									borderRadius: '50%',
+									bgcolor: accent ? tokens.primary : tokens.text.muted,
+								}}
+							/>
+						</Box>
+						<Typography variant="body2" sx={{ color: tokens.text.secondary, lineHeight: 1.65, flex: 1 }}>
 							{line}
 						</Typography>
 					</Stack>

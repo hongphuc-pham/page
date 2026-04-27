@@ -5,15 +5,15 @@
 		"org": "University of Adelaide — CREST",
 		"location": "Adelaide, Australia",
 		"achievements": [
-			"Delivered 4–5 production web and mobile applications end-to-end for researcher, data-scientist and operational-user teams.",
-			"Integrated LLMs and foundational models to automate workflows previously handled manually by researchers."
+			"Contributed to several web and mobile applications used by research and project teams. The tools are functional and have supported research outputs and fundraising activities, rather than being production systems at industrial scale."
 		],
 		"responsibilities": [
-			"Designed and built backend services and REST APIs in Node.js and Python, integrating PostgreSQL, MongoDB, Milvus and Neo4j.",
-			"Built RAG pipelines and LLM-enabled data workflows for model training, fine-tuning and inference.",
-			"Implemented CI/CD with GitHub Actions and container deployments via Docker and OpenStack, improving release consistency.",
-			"Conducted API design reviews and produced technical docs via Swagger and GitHub Wiki.",
-			"Mentored an incoming teammate through onboarding and provided semester-long guidance to student contributors."
+			"Built backend services and REST APIs in Node.js and Python, integrating PostgreSQL, MongoDB, Milvus and Neo4j across internal-facing systems.",
+			"Wrote Python data-processing workflows and LLM-enabled pipelines for model training, fine-tuning and inference, helping researchers automate work that had been manual.",
+			"Set up CI/CD with GitHub Actions and container-based deployments using Docker and OpenStack to make the team's release process more consistent.",
+			"Took part in API design reviews and wrote documentation in Swagger and GitHub Wiki to help teammates and external collaborators integrate with our services.",
+			"Mentored a new team member through their one-month onboarding and supported student contributors over a semester, adjusting how I explained things to suit each person's experience.",
+			"Worked closely with researchers, data scientists and end users to clarify requirements and refine solutions through feedback."
 		]
 	},
 	{
@@ -22,15 +22,14 @@
 		"org": "ANZ New Zealand",
 		"location": "Wellington, New Zealand",
 		"achievements": [
-			"Kau Mau Te Wehi Award (2019) — verified ~10% improvement in annual disaster-recovery exercise efficiency.",
-			"Replaced manual Excel workflows with a Java / Spring Boot microservices disaster-recovery platform."
+			"Worked on an enterprise disaster-recovery management platform, contributing to a Java / Spring Boot microservices solution that replaced manual, Excel-based workflows. The team's work was recognised with the Kau Mau Te Wehi Award and was associated with a measured ~10% improvement in disaster-recovery exercise efficiency."
 		],
 		"responsibilities": [
-			"Performed MS SQL Server schema updates and data migrations with zero data-loss incidents across DR exercises.",
-			"Supported containerised deployments with Docker and Red Hat OpenShift and helped configure the CI/CD pipeline.",
-			"Translated operational requirements from business stakeholders into application features.",
-			"Investigated and resolved critical issues during live DR exercises under operational pressure.",
-			"Produced technical and end-user documentation to support adoption by frontline teams."
+			"Carried out schema updates and data migrations on Microsoft SQL Server, helping to maintain data integrity through complex disaster-recovery scenarios.",
+			"Helped with containerised deployments on Docker and Red Hat OpenShift and contributed to CI/CD pipeline configuration alongside the team.",
+			"Worked with business stakeholders to understand operational needs and translate them into application features.",
+			"Investigated and resolved issues during live disaster-recovery exercises, which taught me a lot about diagnosing systems under pressure.",
+			"Wrote technical and end-user documentation to support adoption by frontline teams."
 		]
 	},
 	{
