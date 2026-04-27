@@ -41,8 +41,8 @@ export function PainterlyBackground() {
 				overflow: 'hidden',
 				pointerEvents: 'none',
 				isolation: 'isolate',
-				background:
-					'radial-gradient(140% 100% at 50% 0%, #0D1220 0%, #070A12 55%, #05070D 100%)',
+				background: 'var(--painter-bg)',
+				transition: 'background 300ms ease',
 			}}
 		>
 			<Box
@@ -54,7 +54,7 @@ export function PainterlyBackground() {
 					height: '70vw',
 					maxWidth: 900,
 					maxHeight: 900,
-					background: 'radial-gradient(circle, rgba(124,231,255,0.45) 0%, rgba(124,231,255,0) 65%)',
+					background: 'var(--painter-blob-1)',
 					animation: `${drift1} 22s ease-in-out infinite`,
 				}}
 			/>
@@ -67,8 +67,7 @@ export function PainterlyBackground() {
 					height: '60vw',
 					maxWidth: 800,
 					maxHeight: 800,
-					background:
-						'radial-gradient(circle, rgba(198,255,61,0.22) 0%, rgba(198,255,61,0) 60%)',
+					background: 'var(--painter-blob-2)',
 					animation: `${drift2} 28s ease-in-out infinite`,
 				}}
 			/>
@@ -81,8 +80,7 @@ export function PainterlyBackground() {
 					height: '70vw',
 					maxWidth: 960,
 					maxHeight: 960,
-					background:
-						'radial-gradient(circle, rgba(255,176,46,0.22) 0%, rgba(255,107,107,0.08) 40%, rgba(255,107,107,0) 70%)',
+					background: 'var(--painter-blob-3)',
 					animation: `${drift3} 30s ease-in-out infinite`,
 				}}
 			/>
@@ -95,8 +93,7 @@ export function PainterlyBackground() {
 					height: '55vw',
 					maxWidth: 720,
 					maxHeight: 720,
-					background:
-						'radial-gradient(circle, rgba(180,130,255,0.28) 0%, rgba(124,231,255,0.08) 55%, rgba(124,231,255,0) 80%)',
+					background: 'var(--painter-blob-4)',
 					animation: `${drift4} 26s ease-in-out infinite`,
 				}}
 			/>
@@ -105,7 +102,7 @@ export function PainterlyBackground() {
 				sx={{
 					position: 'absolute',
 					inset: 0,
-					opacity: 0.22,
+					opacity: 'var(--painter-noise-opacity)',
 					mixBlendMode: 'overlay',
 					backgroundImage: `url("data:image/svg+xml;utf8,${encodeURIComponent(
 						'<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.5 0"/></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>',
@@ -119,8 +116,7 @@ export function PainterlyBackground() {
 				sx={{
 					position: 'absolute',
 					inset: 0,
-					background:
-						'radial-gradient(120% 80% at 50% 50%, transparent 35%, rgba(0,0,0,0.7) 100%)',
+					background: 'var(--painter-vignette)',
 					pointerEvents: 'none',
 				}}
 			/>

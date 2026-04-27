@@ -12,6 +12,18 @@
 			rel="stylesheet"
 		/>
 		<title>Phuc Pham · Software Developer</title>
+		<script>
+			(function () {
+				try {
+					var saved = localStorage.getItem('phuc.theme')
+					var mode = saved === 'light' ? 'light' : 'dark'
+					document.documentElement.dataset.theme = mode
+					document.documentElement.style.colorScheme = mode
+				} catch (e) {
+					document.documentElement.dataset.theme = 'dark'
+				}
+			})()
+		</script>
 	</head>
 	<body>
 		<div id="root"></div>

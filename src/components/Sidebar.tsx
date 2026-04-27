@@ -6,10 +6,14 @@ import LocationOnIcon from '@mui/icons-material/FmdGoodOutlined'
 import EmailIcon from '@mui/icons-material/EmailOutlined'
 import PhoneIcon from '@mui/icons-material/PhoneOutlined'
 import DescriptionIcon from '@mui/icons-material/DescriptionOutlined'
+import SlideshowIcon from '@mui/icons-material/SlideshowOutlined'
+import PlayCircleIcon from '@mui/icons-material/PlayCircleOutline'
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
 import site from '../config/site'
 import avatar from '../assets/ava.jpg'
 import resume from '../assets/Phuc_Pham-CV-0401766596.docx'
+import deck from '../assets/Phuc_Pham-Interview_Showcase.pptx'
+import reel from '../assets/Phuc_Pham-Interview_Reel.mp4'
 import { fonts, tokens } from '../theme'
 import { SectionNav } from './SectionNav'
 import { MascotToon } from './MascotToon'
@@ -33,7 +37,7 @@ export function Sidebar() {
 				height: { md: '100dvh' },
 				p: { xs: 2, md: 2.5 },
 				borderRight: { md: `1px solid ${tokens.line}` },
-				backgroundColor: 'rgba(7,10,18,0.62)',
+				backgroundColor: 'var(--sidebar-bg)',
 				backdropFilter: 'blur(18px) saturate(140%)',
 				WebkitBackdropFilter: 'blur(18px) saturate(140%)',
 				display: 'flex',
@@ -159,6 +163,29 @@ export function Sidebar() {
 					>
 						<LinkedInIcon fontSize="small" />
 					</IconButton>
+					<Tooltip title="Interview deck (PPTX)">
+						<IconButton
+							component={Link}
+							href={deck}
+							download
+							aria-label="Download interview deck"
+							sx={{ color: tokens.text.secondary, '&:hover': { color: tokens.primary } }}
+						>
+							<SlideshowIcon fontSize="small" />
+						</IconButton>
+					</Tooltip>
+					<Tooltip title="Play 30s vertical reel">
+						<IconButton
+							component={Link}
+							href={reel}
+							target="_blank"
+							rel="noreferrer"
+							aria-label="Play 30 second reel"
+							sx={{ color: tokens.text.secondary, '&:hover': { color: tokens.lime } }}
+						>
+							<PlayCircleIcon fontSize="small" />
+						</IconButton>
+					</Tooltip>
 					<Box sx={{ flex: 1 }} />
 					<Button
 						variant="contained"

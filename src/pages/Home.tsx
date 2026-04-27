@@ -1,22 +1,26 @@
-import { Box, Button, Chip, Grid, Link, Stack, Typography } from '@mui/material'
-import NorthEastIcon from '@mui/icons-material/NorthEast'
-import EmailIcon from '@mui/icons-material/EmailOutlined'
+import * as Icons from '@mui/icons-material'
 import DownloadIcon from '@mui/icons-material/DownloadOutlined'
+import EmailIcon from '@mui/icons-material/EmailOutlined'
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import LinkedInIcon from '@mui/icons-material/LinkedIn'
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord'
-import * as Icons from '@mui/icons-material'
+import NorthEastIcon from '@mui/icons-material/NorthEast'
+import PlayCircleIcon from '@mui/icons-material/PlayCircleOutline'
+import SlideshowIcon from '@mui/icons-material/SlideshowOutlined'
+import { Box, Button, Chip, Grid, Link, Stack, Typography } from '@mui/material'
+import resumeDocx from '../assets/Phuc_Pham-CV-0401766596.docx'
+import reelMp4 from '../assets/Phuc_Pham-Interview_Reel.mp4'
+import deckPptx from '../assets/Phuc_Pham-Interview_Showcase.pptx'
 import { SectionLabel } from '../components/SectionLabel'
 import { Timeline, TimelineItem } from '../components/Timeline'
-import { fonts, tokens } from '../theme'
 import site from '../config/site'
 import about from '../data/about.json'
-import skills from '../data/skills.json'
-import exp from '../data/experience.json'
 import edu from '../data/education.json'
+import exp from '../data/experience.json'
 import projects from '../data/projects.json'
 import showcase from '../data/showcase.json'
-import resumeDocx from '../assets/Phuc_Pham-CV-0401766596.docx'
+import skills from '../data/skills.json'
+import { fonts, tokens } from '../theme'
 
 type Doing = { icon: string; title: string; text: string }
 type About = { description: string; doing: Doing[] }
@@ -206,6 +210,28 @@ function Hero() {
 					download
 				>
 					Download CV
+				</Button>
+				<Button
+					variant="outlined"
+					color="primary"
+					startIcon={<SlideshowIcon />}
+					component={Link}
+					href={deckPptx}
+					download
+				>
+					PTTX
+				</Button>
+				<Button
+					variant="outlined"
+					color="primary"
+					startIcon={<PlayCircleIcon />}
+					component={Link}
+					href={reelMp4}
+					target="_blank"
+					rel="noreferrer"
+					endIcon={<NorthEastIcon sx={{ fontSize: 16 }} />}
+				>
+					30s Reel
 				</Button>
 				<Button
 					variant="outlined"
@@ -807,7 +833,7 @@ function ChromeBar({ item, isMobile }: { item: ShowcaseItem; isMobile: boolean }
 					px: 2,
 					py: 1.1,
 					borderBottom: `1px solid ${tokens.line}`,
-					bgcolor: 'rgba(7,10,18,0.65)',
+					bgcolor: 'var(--chrome-bar-bg)',
 				}}
 			>
 				<Icons.Apple sx={{ fontSize: 14, color: tokens.text.muted }} />
@@ -836,7 +862,7 @@ function ChromeBar({ item, isMobile }: { item: ShowcaseItem; isMobile: boolean }
 				px: 2,
 				py: 1.1,
 				borderBottom: `1px solid ${tokens.line}`,
-				bgcolor: 'rgba(7,10,18,0.65)',
+				bgcolor: 'var(--chrome-bar-bg)',
 			}}
 		>
 			<Stack direction="row" spacing={0.6}>
