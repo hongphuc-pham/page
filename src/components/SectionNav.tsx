@@ -64,7 +64,7 @@ export function SectionNav() {
 					opacity: cursor.inside ? 1 : 0,
 					transition: 'opacity 220ms ease',
 					background: cursor.inside
-						? `radial-gradient(180px 180px at ${cursor.x}px ${cursor.y}px, rgba(124,231,255,0.18), transparent 60%)`
+						? `radial-gradient(180px 180px at ${cursor.x}px ${cursor.y}px, ${tokens.spotlight}, transparent 60%)`
 						: 'transparent',
 				}}
 			/>
@@ -128,11 +128,11 @@ function NavRow({
 				px: 1.25,
 				py: 1,
 				borderRadius: 1.5,
-				border: `1px solid ${active ? 'rgba(124,231,255,0.25)' : 'transparent'}`,
+				border: `1px solid ${active ? tokens.primaryBorder : 'transparent'}`,
 				background: active
-					? 'linear-gradient(90deg, rgba(124,231,255,0.12), rgba(198,255,61,0.04) 60%, transparent)'
+					? `linear-gradient(90deg, ${tokens.primaryGlow}, ${tokens.pillLime.bg} 60%, transparent)`
 					: hover
-					? 'rgba(124,231,255,0.05)'
+					? tokens.primaryTint
 					: 'transparent',
 				cursor: 'pointer',
 				color: 'inherit',
@@ -197,7 +197,7 @@ function NavRow({
 						height: 6,
 						borderRadius: '50%',
 						bgcolor: tokens.primary,
-						boxShadow: '0 0 0 4px rgba(124,231,255,0.18)',
+						boxShadow: `0 0 0 4px ${tokens.primaryGlow}`,
 					}}
 				/>
 			)}

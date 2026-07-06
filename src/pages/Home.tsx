@@ -1,3 +1,4 @@
+import { keyframes } from '@emotion/react'
 import * as Icons from '@mui/icons-material'
 import DownloadIcon from '@mui/icons-material/DownloadOutlined'
 import EmailIcon from '@mui/icons-material/EmailOutlined'
@@ -8,11 +9,18 @@ import NorthEastIcon from '@mui/icons-material/NorthEast'
 import PlayCircleIcon from '@mui/icons-material/PlayCircleOutline'
 import SlideshowIcon from '@mui/icons-material/SlideshowOutlined'
 import { Box, Button, Chip, Grid, Link, Stack, Typography } from '@mui/material'
+import { motion, useReducedMotion, type Variants } from 'framer-motion'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import resumeDocx from '../assets/Phuc_Pham-CV-0401766596.docx'
 import reelMp4 from '../assets/Phuc_Pham-Interview_Reel.mp4'
 import deckPptx from '../assets/Phuc_Pham-Interview_Showcase.pptx'
+import { CountUp } from '../components/motion/CountUp'
+import { InteractiveCard } from '../components/motion/InteractiveCard'
+import { Magnetic } from '../components/motion/Magnetic'
+import { Reveal, Stagger, StaggerItem } from '../components/motion/Reveal'
 import { SectionLabel } from '../components/SectionLabel'
 import { Timeline, TimelineItem } from '../components/Timeline'
+import { useThemeMode } from '../utils/useThemeMode'
 import site from '../config/site'
 import about from '../data/about.json'
 import edu from '../data/education.json'
@@ -54,6 +62,33 @@ type ShowcaseItem = {
 const skillData = skills as Skills
 const aboutData = about as About
 
+const HeroScene = lazy(() => import('../components/three/HeroScene'))
+
+const EASE: [number, number, number, number] = [0.22, 0.61, 0.36, 1]
+
+const heroContainer: Variants = {
+	hidden: {},
+	visible: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
+}
+const heroItem: Variants = {
+	hidden: { opacity: 0, y: 24 },
+	visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
+}
+const lineReveal: Variants = {
+	hidden: { y: '110%' },
+	visible: { y: '0%', transition: { duration: 0.85, ease: EASE } },
+}
+
+const shimmer = keyframes`
+	0% { background-position: 0% 50%; }
+	50% { background-position: 100% 50%; }
+	100% { background-position: 0% 50%; }
+`
+const cursorBlink = keyframes`
+	0%, 49% { opacity: 0.8; }
+	50%, 100% { opacity: 0; }
+`
+
 const stackGroups: { label: string; items: string[] }[] = [
 	{ label: 'Languages', items: skillData.languages },
 	{ label: 'Backend & Frontend', items: skillData.frontend_fullstack },
@@ -86,6 +121,9 @@ export function Home() {
 }
 
 function Hero() {
+	const reduced = useReducedMotion()
+	const mode = useThemeMode()
+
 	return (
 		<Box
 			sx={{
@@ -94,177 +132,270 @@ function Hero() {
 				pb: { xs: 4, md: 6 },
 			}}
 		>
-			<Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
-				<Chip
-					icon={<FiberManualRecordIcon sx={{ fontSize: '10px !important', color: `${tokens.lime} !important` }} />}
-					label={site.availability}
+			<Box
+				aria-hidden
+				sx={{
+					position: 'absolute',
+					top: 0,
+					bottom: 0,
+					right: { xs: '-35%', md: '-10%' },
+					width: { xs: '110%', md: '75%' },
+					zIndex: 0,
+					pointerEvents: 'none',
+					opacity: 0.9,
+					maskImage: 'linear-gradient(90deg, transparent 0%, black 35%)',
+					WebkitMaskImage: 'linear-gradient(90deg, transparent 0%, black 35%)',
+				}}
+			>
+				<Suspense fallback={null}>
+					<HeroScene mode={mode} animate={!reduced} />
+				</Suspense>
+			</Box>
+
+			<motion.div
+				variants={heroContainer}
+				initial={reduced ? false : 'hidden'}
+				animate="visible"
+				style={{ position: 'relative', zIndex: 1 }}
+			>
+				<motion.div variants={heroItem}>
+					<Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
+						<Chip
+							icon={<FiberManualRecordIcon sx={{ fontSize: '10px !important', color: `${tokens.lime} !important` }} />}
+							label={site.availability}
+							sx={{
+								bgcolor: tokens.pillLime.bg,
+								borderColor: tokens.pillLime.border,
+								color: tokens.text.primary,
+								fontFamily: fonts.mono,
+								fontSize: 11,
+								letterSpacing: '0.08em',
+							}}
+						/>
+					</Stack>
+				</motion.div>
+
+				<motion.div variants={heroItem}>
+					<TypedKicker text={`Phuc (William) Pham · ${site.location}`} />
+				</motion.div>
+
+				<Typography
+					variant="h1"
 					sx={{
-						bgcolor: 'rgba(198,255,61,0.06)',
-						borderColor: 'rgba(198,255,61,0.28)',
-						color: tokens.text.primary,
-						fontFamily: fonts.mono,
-						fontSize: 11,
-						letterSpacing: '0.08em',
+						fontSize: { xs: 44, sm: 64, md: 88, lg: 104 },
+						lineHeight: 0.98,
+						letterSpacing: '-0.035em',
+						mb: 3,
 					}}
-				/>
-			</Stack>
+				>
+					<Box component="span" sx={{ display: 'block', overflow: 'hidden', pb: '0.06em' }}>
+						<Box component={motion.span} variants={lineReveal} sx={{ display: 'inline-block' }}>
+							Software that
+							<Box
+								component="span"
+								sx={{
+									display: 'inline-block',
+									ml: 1.5,
+									px: 1,
+									background: tokens.gradient,
+									backgroundSize: '200% 200%',
+									WebkitBackgroundClip: 'text',
+									WebkitTextFillColor: 'transparent',
+									backgroundClip: 'text',
+									animation: reduced ? 'none' : `${shimmer} 6s ease-in-out infinite`,
+								}}
+							>
+								serves
+							</Box>
+						</Box>
+					</Box>
+					<Box component="span" sx={{ display: 'block', overflow: 'hidden', pb: '0.06em' }}>
+						<Box component={motion.span} variants={lineReveal} sx={{ display: 'inline-block' }}>
+							people, not just
+							<Box
+								component="span"
+								sx={{
+									position: 'relative',
+									zIndex: 0,
+									ml: 1.5,
+									fontStyle: 'italic',
+									fontFamily: fonts.display,
+								}}
+							>
+								functions
+								<Box
+									sx={{
+										position: 'absolute',
+										left: 0,
+										right: 0,
+										bottom: { xs: 4, md: 8 },
+										height: { xs: 6, md: 10 },
+										background: tokens.selection,
+										borderRadius: 2,
+										zIndex: -1,
+									}}
+								/>
+							</Box>
+							.
+						</Box>
+					</Box>
+				</Typography>
 
-			<Typography
-				sx={{
-					fontFamily: fonts.mono,
-					fontSize: 13,
-					letterSpacing: '0.2em',
-					color: tokens.text.secondary,
-					textTransform: 'uppercase',
-					mb: 2,
-				}}
-			>
-				Phuc (William) Pham · {site.location}
-			</Typography>
+				<motion.div variants={heroItem}>
+					<Typography
+						variant="h6"
+						sx={{
+							color: tokens.text.secondary,
+							fontWeight: 400,
+							maxWidth: 640,
+							fontFamily: fonts.body,
+							fontSize: { xs: 16, md: 18 },
+							mb: 4,
+						}}
+					>
+						{site.role} across web, mobile, and ML — shipping production systems at
+						<Box component="span" sx={{ color: tokens.text.primary }}> UofA CREST</Box> and
+						<Box component="span" sx={{ color: tokens.text.primary }}> ANZ New Zealand</Box>.
+						Reliable in high-stakes operations, comfortable across technical and non-technical teams.
+					</Typography>
+				</motion.div>
 
-			<Typography
-				variant="h1"
-				sx={{
-					fontSize: { xs: 44, sm: 64, md: 88, lg: 104 },
-					lineHeight: 0.98,
-					letterSpacing: '-0.035em',
-					mb: 3,
-				}}
-			>
-				Software that
+				<motion.div variants={heroItem}>
+					<Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 5, alignItems: { xs: 'stretch', sm: 'center' } }}>
+						<Magnetic>
+							<Button
+								variant="contained"
+								color="primary"
+								startIcon={<EmailIcon />}
+								component={Link}
+								href={`mailto:${site.email}`}
+								sx={{ width: '100%' }}
+							>
+								{site.email}
+							</Button>
+						</Magnetic>
+						<Magnetic>
+							<Button
+								variant="outlined"
+								color="primary"
+								startIcon={<DownloadIcon />}
+								component={Link}
+								href={resumeDocx}
+								download
+								sx={{ width: '100%' }}
+							>
+								Download CV
+							</Button>
+						</Magnetic>
+						<Magnetic>
+							<Button
+								variant="outlined"
+								color="primary"
+								startIcon={<SlideshowIcon />}
+								component={Link}
+								href={deckPptx}
+								download
+								sx={{ width: '100%' }}
+							>
+								PTTX
+							</Button>
+						</Magnetic>
+						<Magnetic>
+							<Button
+								variant="outlined"
+								color="primary"
+								startIcon={<PlayCircleIcon />}
+								component={Link}
+								href={reelMp4}
+								target="_blank"
+								rel="noreferrer"
+								endIcon={<NorthEastIcon sx={{ fontSize: 16 }} />}
+								sx={{ width: '100%' }}
+							>
+								30s Reel
+							</Button>
+						</Magnetic>
+						<Magnetic>
+							<Button
+								variant="outlined"
+								color="primary"
+								startIcon={<GitHubIcon />}
+								component={Link}
+								href={site.socials.github}
+								target="_blank"
+								rel="noreferrer"
+								endIcon={<NorthEastIcon sx={{ fontSize: 16 }} />}
+								sx={{ width: '100%' }}
+							>
+								GitHub
+							</Button>
+						</Magnetic>
+					</Stack>
+				</motion.div>
+
+				<motion.div variants={heroItem}>
+					<Stack
+						direction="row"
+						spacing={3}
+						sx={{
+							pt: 3,
+							borderTop: `1px solid ${tokens.line}`,
+							fontFamily: fonts.mono,
+							fontSize: 12,
+							color: tokens.text.muted,
+							flexWrap: 'wrap',
+							rowGap: 1,
+						}}
+					>
+						<MetaTag label="focus" value="web · mobile · ai" />
+						<MetaTag label="tz" value={site.timezone} />
+						<MetaTag label="stack" value="react · node · python · fastapi" />
+					</Stack>
+				</motion.div>
+			</motion.div>
+		</Box>
+	)
+}
+
+function TypedKicker({ text }: { text: string }) {
+	const reduced = useReducedMotion()
+	const [chars, setChars] = useState(reduced ? text.length : 0)
+
+	useEffect(() => {
+		if (reduced || chars >= text.length) return
+		const id = setTimeout(() => setChars((c) => c + 1), 26)
+		return () => clearTimeout(id)
+	}, [chars, reduced, text.length])
+
+	return (
+		<Typography
+			aria-label={text}
+			sx={{
+				fontFamily: fonts.mono,
+				fontSize: 13,
+				letterSpacing: '0.2em',
+				color: tokens.text.secondary,
+				textTransform: 'uppercase',
+				mb: 2,
+				minHeight: '1.6em',
+			}}
+		>
+			<Box component="span" aria-hidden>
+				{text.slice(0, chars)}
 				<Box
 					component="span"
 					sx={{
 						display: 'inline-block',
-						ml: 1.5,
-						px: 1,
-						background: tokens.gradient,
-						WebkitBackgroundClip: 'text',
-						WebkitTextFillColor: 'transparent',
-						backgroundClip: 'text',
+						width: '0.55em',
+						height: '1em',
+						ml: 0.5,
+						verticalAlign: 'text-bottom',
+						bgcolor: tokens.primary,
+						animation: reduced ? 'none' : `${cursorBlink} 1.1s steps(1) infinite`,
 					}}
-				>
-					serves
-				</Box>
-				<br />
-				people, not just
-				<Box
-					component="span"
-					sx={{
-						position: 'relative',
-						ml: 1.5,
-						fontStyle: 'italic',
-						fontFamily: fonts.display,
-					}}
-				>
-					functions
-					<Box
-						sx={{
-							position: 'absolute',
-							left: 0,
-							right: 0,
-							bottom: { xs: 4, md: 8 },
-							height: { xs: 6, md: 10 },
-							background: 'rgba(124,231,255,0.25)',
-							borderRadius: 2,
-							zIndex: -1,
-						}}
-					/>
-				</Box>
-				.
-			</Typography>
-
-			<Typography
-				variant="h6"
-				sx={{
-					color: tokens.text.secondary,
-					fontWeight: 400,
-					maxWidth: 640,
-					fontFamily: fonts.body,
-					fontSize: { xs: 16, md: 18 },
-					mb: 4,
-				}}
-			>
-				{site.role} across web, mobile, and ML — shipping production systems at
-				<Box component="span" sx={{ color: tokens.text.primary }}> UofA CREST</Box> and
-				<Box component="span" sx={{ color: tokens.text.primary }}> ANZ New Zealand</Box>.
-				Reliable in high-stakes operations, comfortable across technical and non-technical teams.
-			</Typography>
-
-			<Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mb: 5 }}>
-				<Button
-					variant="contained"
-					color="primary"
-					startIcon={<EmailIcon />}
-					component={Link}
-					href={`mailto:${site.email}`}
-				>
-					{site.email}
-				</Button>
-				<Button
-					variant="outlined"
-					color="primary"
-					startIcon={<DownloadIcon />}
-					component={Link}
-					href={resumeDocx}
-					download
-				>
-					Download CV
-				</Button>
-				<Button
-					variant="outlined"
-					color="primary"
-					startIcon={<SlideshowIcon />}
-					component={Link}
-					href={deckPptx}
-					download
-				>
-					PTTX
-				</Button>
-				<Button
-					variant="outlined"
-					color="primary"
-					startIcon={<PlayCircleIcon />}
-					component={Link}
-					href={reelMp4}
-					target="_blank"
-					rel="noreferrer"
-					endIcon={<NorthEastIcon sx={{ fontSize: 16 }} />}
-				>
-					30s Reel
-				</Button>
-				<Button
-					variant="outlined"
-					color="primary"
-					startIcon={<GitHubIcon />}
-					component={Link}
-					href={site.socials.github}
-					target="_blank"
-					rel="noreferrer"
-					endIcon={<NorthEastIcon sx={{ fontSize: 16 }} />}
-				>
-					GitHub
-				</Button>
-			</Stack>
-
-			<Stack
-				direction="row"
-				spacing={3}
-				sx={{
-					pt: 3,
-					borderTop: `1px solid ${tokens.line}`,
-					fontFamily: fonts.mono,
-					fontSize: 12,
-					color: tokens.text.muted,
-					flexWrap: 'wrap',
-					rowGap: 1,
-				}}
-			>
-				<MetaTag label="focus" value="web · mobile · ai" />
-				<MetaTag label="tz" value={site.timezone} />
-				<MetaTag label="stack" value="react · node · python · fastapi" />
-			</Stack>
-		</Box>
+				/>
+			</Box>
+		</Typography>
 	)
 }
 
@@ -280,44 +411,52 @@ function MetaTag({ label, value }: { label: string; value: string }) {
 function HighlightsStrip() {
 	return (
 		<Box component="section" id="signal">
-			<SectionLabel index="01" title="signal" />
-			<Grid container spacing={2}>
-				{highlights.map((h) => (
-					<Grid key={h.k} item xs={6} md={3}>
-						<Box
-							sx={{
-								p: 2.5,
-								height: '100%',
-								border: `1px solid ${tokens.line}`,
-								borderRadius: 2,
-								bgcolor: tokens.surface,
-								transition: 'border-color 160ms ease, transform 160ms ease',
-								'&:hover': { borderColor: tokens.primary, transform: 'translateY(-2px)' },
-							}}
-						>
-							<Typography
-								variant="h3"
-								sx={{
-									fontSize: { xs: 30, md: 38 },
-									background: tokens.gradient,
-									WebkitBackgroundClip: 'text',
-									WebkitTextFillColor: 'transparent',
-									backgroundClip: 'text',
-									mb: 0.5,
-								}}
-							>
-								{h.k}
-							</Typography>
-							<Typography sx={{ color: tokens.text.primary, fontWeight: 600, fontSize: 14 }}>{h.v}</Typography>
-							<Typography
-								sx={{ color: tokens.text.muted, fontFamily: fonts.mono, fontSize: 11, mt: 0.5, letterSpacing: '0.04em' }}
-							>
-								{h.note}
-							</Typography>
-						</Box>
-					</Grid>
-				))}
-			</Grid>
+			<Reveal>
+				<SectionLabel index="01" title="signal" />
+			</Reveal>
+			<Stagger>
+				<Grid container spacing={2}>
+					{highlights.map((h) => (
+						<Grid key={h.k} item xs={6} md={3}>
+							<StaggerItem>
+								<InteractiveCard tiltMax={6} sx={{ borderRadius: 2 }}>
+									<Box
+										sx={{
+											p: 2.5,
+											height: '100%',
+											border: `1px solid ${tokens.line}`,
+											borderRadius: 2,
+											bgcolor: tokens.surface,
+											transition: 'border-color 160ms ease',
+											'&:hover': { borderColor: tokens.primary },
+										}}
+									>
+										<Typography
+											variant="h3"
+											sx={{
+												fontSize: { xs: 30, md: 38 },
+												background: tokens.gradient,
+												WebkitBackgroundClip: 'text',
+												WebkitTextFillColor: 'transparent',
+												backgroundClip: 'text',
+												mb: 0.5,
+											}}
+										>
+											<CountUp value={h.k} />
+										</Typography>
+										<Typography sx={{ color: tokens.text.primary, fontWeight: 600, fontSize: 14 }}>{h.v}</Typography>
+										<Typography
+											sx={{ color: tokens.text.muted, fontFamily: fonts.mono, fontSize: 11, mt: 0.5, letterSpacing: '0.04em' }}
+										>
+											{h.note}
+										</Typography>
+									</Box>
+								</InteractiveCard>
+							</StaggerItem>
+						</Grid>
+					))}
+				</Grid>
+			</Stagger>
 		</Box>
 	)
 }
@@ -326,22 +465,28 @@ function AboutSection() {
 	const doing = aboutData.doing
 	return (
 		<Box component="section" id="about">
-			<SectionLabel index="02" title="about" />
+			<Reveal>
+				<SectionLabel index="02" title="about" />
+			</Reveal>
 			<Grid container spacing={{ xs: 3, md: 5 }}>
 				<Grid item xs={12} md={6}>
-					<Typography variant="h4" sx={{ mb: 2, fontSize: { xs: 28, md: 34 } }}>
-						Built for reliable delivery, curious about everything else.
-					</Typography>
-					<Typography sx={{ color: tokens.text.secondary, lineHeight: 1.7 }}>
-						{aboutData.description}
-					</Typography>
+					<Reveal delay={0.05}>
+						<Typography variant="h4" sx={{ mb: 2, fontSize: { xs: 28, md: 34 } }}>
+							Built for reliable delivery, curious about everything else.
+						</Typography>
+						<Typography sx={{ color: tokens.text.secondary, lineHeight: 1.7 }}>
+							{aboutData.description}
+						</Typography>
+					</Reveal>
 				</Grid>
 				<Grid item xs={12} md={6}>
+					<Stagger>
 					<Grid container spacing={2}>
 						{doing.map((d) => {
 							const Icon = (Icons as unknown as Record<string, typeof Icons.Api>)[d.icon] ?? Icons.Api
 							return (
 								<Grid key={d.title} item xs={12} sm={6}>
+									<StaggerItem>
 									<Box
 										sx={{
 											p: 2.5,
@@ -360,7 +505,7 @@ function AboutSection() {
 												borderRadius: 1.5,
 												display: 'grid',
 												placeItems: 'center',
-												bgcolor: 'rgba(124,231,255,0.08)',
+												bgcolor: 'var(--chip-primary-bg)',
 												color: tokens.primary,
 												mb: 1.5,
 											}}
@@ -372,10 +517,12 @@ function AboutSection() {
 											{d.text}
 										</Typography>
 									</Box>
+									</StaggerItem>
 								</Grid>
 							)
 						})}
 					</Grid>
+					</Stagger>
 				</Grid>
 			</Grid>
 		</Box>
@@ -385,13 +532,17 @@ function AboutSection() {
 function StackSection() {
 	return (
 		<Box component="section" id="stack">
-			<SectionLabel index="03" title="stack" />
-			<Typography variant="h4" sx={{ mb: 3, fontSize: { xs: 28, md: 34 } }}>
-				Tools I reach for.
-			</Typography>
+			<Reveal>
+				<SectionLabel index="03" title="stack" />
+				<Typography variant="h4" sx={{ mb: 3, fontSize: { xs: 28, md: 34 } }}>
+					Tools I reach for.
+				</Typography>
+			</Reveal>
+			<Stagger>
 			<Stack spacing={2}>
 				{stackGroups.map((g) => (
-					<Box key={g.label} sx={{ display: { md: 'grid' }, gridTemplateColumns: '220px 1fr', gap: 3, alignItems: 'start' }}>
+					<StaggerItem key={g.label}>
+					<Box sx={{ display: { md: 'grid' }, gridTemplateColumns: '220px 1fr', gap: 3, alignItems: 'start' }}>
 						<Typography
 							sx={{
 								fontFamily: fonts.mono,
@@ -410,8 +561,10 @@ function StackSection() {
 							))}
 						</Stack>
 					</Box>
+					</StaggerItem>
 				))}
 			</Stack>
+			</Stagger>
 		</Box>
 	)
 }
@@ -420,42 +573,48 @@ function WorkSection() {
 	const list = projects as Project[]
 	return (
 		<Box component="section" id="work">
-			<SectionLabel index="06" title="selected work" />
-			<Stack
-				direction={{ xs: 'column', sm: 'row' }}
-				justifyContent="space-between"
-				alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
-				spacing={1.5}
-				sx={{ mb: 3 }}
-			>
-				<Typography variant="h4" sx={{ fontSize: { xs: 28, md: 34 }, maxWidth: 720 }}>
-					Signature projects.
-				</Typography>
-				<Typography
+			<Reveal>
+				<SectionLabel index="06" title="selected work" />
+				<Stack
+					direction={{ xs: 'column', sm: 'row' }}
+					justifyContent="space-between"
+					alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
+					spacing={1.5}
+					sx={{ mb: 3 }}
+				>
+					<Typography variant="h4" sx={{ fontSize: { xs: 28, md: 34 }, maxWidth: 720 }}>
+						Signature projects.
+					</Typography>
+					<Typography
+						sx={{
+							fontFamily: fonts.mono,
+							fontSize: 11,
+							letterSpacing: '0.18em',
+							color: tokens.text.muted,
+							textTransform: 'uppercase',
+							pb: { sm: 1 },
+						}}
+					>
+						case studies coming soon
+					</Typography>
+				</Stack>
+			</Reveal>
+			<Stagger>
+				<Box
 					sx={{
-						fontFamily: fonts.mono,
-						fontSize: 11,
-						letterSpacing: '0.18em',
-						color: tokens.text.muted,
-						textTransform: 'uppercase',
-						pb: { sm: 1 },
+						border: `1px solid ${tokens.line}`,
+						borderRadius: 2.5,
+						bgcolor: tokens.surface,
+						overflow: 'hidden',
 					}}
 				>
-					case studies coming soon
-				</Typography>
-			</Stack>
-			<Box
-				sx={{
-					border: `1px solid ${tokens.line}`,
-					borderRadius: 2.5,
-					bgcolor: tokens.surface,
-					overflow: 'hidden',
-				}}
-			>
-				{list.map((p, i) => (
-					<WorkRow key={p.title} project={p} index={i + 1} divider={i < list.length - 1} />
-				))}
-			</Box>
+					{list.map((p, i) => (
+						<StaggerItem key={p.title}>
+							<WorkRow project={p} index={i + 1} divider={i < list.length - 1} />
+						</StaggerItem>
+					))}
+				</Box>
+			</Stagger>
 		</Box>
 	)
 }
@@ -472,7 +631,7 @@ function WorkRow({ project, index, divider }: { project: Project; index: number;
 				alignItems: 'baseline',
 				borderBottom: divider ? `1px solid ${tokens.line}` : 'none',
 				transition: 'background 200ms ease',
-				'&:hover': { background: 'rgba(124,231,255,0.03)' },
+				'&:hover': { background: tokens.primaryTint },
 			}}
 		>
 			<Typography
@@ -573,37 +732,45 @@ function ShowcaseSection() {
 	const items = showcase as ShowcaseItem[]
 	return (
 		<Box component="section" id="live">
-			<SectionLabel index="04" title="live & shipping" />
-			<Stack
-				direction={{ xs: 'column', sm: 'row' }}
-				justifyContent="space-between"
-				alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
-				spacing={1.5}
-				sx={{ mb: 3 }}
-			>
-				<Typography variant="h4" sx={{ fontSize: { xs: 28, md: 34 }, maxWidth: 720 }}>
-					Products you can visit, install, or read about today.
-				</Typography>
-				<Typography
-					sx={{
-						fontFamily: fonts.mono,
-						fontSize: 11,
-						letterSpacing: '0.18em',
-						color: tokens.text.muted,
-						textTransform: 'uppercase',
-						pb: { sm: 1 },
-					}}
+			<Reveal>
+				<SectionLabel index="04" title="live & shipping" />
+				<Stack
+					direction={{ xs: 'column', sm: 'row' }}
+					justifyContent="space-between"
+					alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
+					spacing={1.5}
+					sx={{ mb: 3 }}
 				>
-					{items.length} live surfaces
-				</Typography>
-			</Stack>
-			<Grid container spacing={2.5}>
-				{items.map((it) => (
-					<Grid key={it.id} item xs={12} md={6}>
-						<ShowcaseCard item={it} />
-					</Grid>
-				))}
-			</Grid>
+					<Typography variant="h4" sx={{ fontSize: { xs: 28, md: 34 }, maxWidth: 720 }}>
+						Products you can visit, install, or read about today.
+					</Typography>
+					<Typography
+						sx={{
+							fontFamily: fonts.mono,
+							fontSize: 11,
+							letterSpacing: '0.18em',
+							color: tokens.text.muted,
+							textTransform: 'uppercase',
+							pb: { sm: 1 },
+						}}
+					>
+						{items.length} live surfaces
+					</Typography>
+				</Stack>
+			</Reveal>
+			<Stagger>
+				<Grid container spacing={2.5}>
+					{items.map((it) => (
+						<Grid key={it.id} item xs={12} md={6}>
+							<StaggerItem>
+								<InteractiveCard tiltMax={3} sx={{ borderRadius: 3 }}>
+									<ShowcaseCard item={it} />
+								</InteractiveCard>
+							</StaggerItem>
+						</Grid>
+					))}
+				</Grid>
+			</Stagger>
 		</Box>
 	)
 }
@@ -955,11 +1122,15 @@ function ShowcaseCta({
 function ExperienceSection() {
 	return (
 		<Box component="section" id="experience">
-			<SectionLabel index="05" title="experience" />
-			<Typography variant="h4" sx={{ mb: 3, fontSize: { xs: 28, md: 34 } }}>
-				Where I've shipped.
-			</Typography>
-			<Timeline items={exp as unknown as TimelineItem[]} />
+			<Reveal>
+				<SectionLabel index="05" title="experience" />
+				<Typography variant="h4" sx={{ mb: 3, fontSize: { xs: 28, md: 34 } }}>
+					Where I've shipped.
+				</Typography>
+			</Reveal>
+			<Reveal delay={0.1}>
+				<Timeline items={exp as unknown as TimelineItem[]} />
+			</Reveal>
 		</Box>
 	)
 }
@@ -967,10 +1138,14 @@ function ExperienceSection() {
 function EducationSection() {
 	return (
 		<Box component="section" id="education">
-			<SectionLabel index="07" title="education" />
+			<Reveal>
+				<SectionLabel index="07" title="education" />
+			</Reveal>
+			<Stagger>
 			<Grid container spacing={2}>
 				{(edu as Education[]).map((e) => (
 					<Grid key={e.title} item xs={12} md={6}>
+						<StaggerItem>
 						<Box
 							sx={{
 								p: 3,
@@ -1000,18 +1175,20 @@ function EducationSection() {
 								</Stack>
 							)}
 						</Box>
+						</StaggerItem>
 					</Grid>
 				))}
 			</Grid>
+			</Stagger>
 		</Box>
 	)
 }
 
 function ContactCTA() {
 	return (
+		<Box component="section" id="contact">
+		<Reveal>
 		<Box
-			component="section"
-			id="contact"
 			sx={{
 				p: { xs: 4, md: 6 },
 				border: `1px solid ${tokens.line}`,
@@ -1041,40 +1218,51 @@ function ContactCTA() {
 				<Typography sx={{ color: tokens.text.secondary, mb: 3, maxWidth: 620 }}>
 					{site.availability}. Happy to chat about roles, collaborations, or a weird side project.
 				</Typography>
-				<Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
-					<Button
-						variant="contained"
-						color="primary"
-						startIcon={<EmailIcon />}
-						component={Link}
-						href={`mailto:${site.email}`}
-					>
-						{site.email}
-					</Button>
-					<Button
-						variant="outlined"
-						color="primary"
-						startIcon={<LinkedInIcon />}
-						component={Link}
-						href={site.socials.linkedin}
-						target="_blank"
-						rel="noreferrer"
-					>
-						LinkedIn
-					</Button>
-					<Button
-						variant="outlined"
-						color="primary"
-						startIcon={<GitHubIcon />}
-						component={Link}
-						href={site.socials.github}
-						target="_blank"
-						rel="noreferrer"
-					>
-						GitHub
-					</Button>
+				<Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ alignItems: { xs: 'stretch', sm: 'center' } }}>
+					<Magnetic>
+						<Button
+							variant="contained"
+							color="primary"
+							startIcon={<EmailIcon />}
+							component={Link}
+							href={`mailto:${site.email}`}
+							sx={{ width: '100%' }}
+						>
+							{site.email}
+						</Button>
+					</Magnetic>
+					<Magnetic>
+						<Button
+							variant="outlined"
+							color="primary"
+							startIcon={<LinkedInIcon />}
+							component={Link}
+							href={site.socials.linkedin}
+							target="_blank"
+							rel="noreferrer"
+							sx={{ width: '100%' }}
+						>
+							LinkedIn
+						</Button>
+					</Magnetic>
+					<Magnetic>
+						<Button
+							variant="outlined"
+							color="primary"
+							startIcon={<GitHubIcon />}
+							component={Link}
+							href={site.socials.github}
+							target="_blank"
+							rel="noreferrer"
+							sx={{ width: '100%' }}
+						>
+							GitHub
+						</Button>
+					</Magnetic>
 				</Stack>
 			</Box>
+		</Box>
+		</Reveal>
 		</Box>
 	)
 }

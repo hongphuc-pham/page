@@ -1,4 +1,6 @@
 import { Avatar, Box, Button, Divider, IconButton, Link, Stack, Tooltip, Typography } from '@mui/material'
+import { useRef, useState } from 'react'
+import CheckIcon from '@mui/icons-material/Check'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import LinkedInIcon from '@mui/icons-material/LinkedIn'
@@ -19,9 +21,14 @@ import { SectionNav } from './SectionNav'
 import { MascotToon } from './MascotToon'
 
 export function Sidebar() {
+	const [copied, setCopied] = useState(false)
+	const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 	const copyEmail = async () => {
 		try {
 			await navigator.clipboard.writeText(site.email)
+			setCopied(true)
+			if (copyTimer.current) clearTimeout(copyTimer.current)
+			copyTimer.current = setTimeout(() => setCopied(false), 1800)
 		} catch {
 			// ignored
 		}
@@ -70,7 +77,7 @@ export function Sidebar() {
 								width: 64,
 								height: 64,
 								border: `2px solid ${tokens.primary}`,
-								boxShadow: '0 0 0 4px rgba(124,231,255,0.12)',
+								boxShadow: `0 0 0 4px ${tokens.primaryGlow}`,
 							}}
 						>
 							PP
@@ -115,8 +122,8 @@ export function Sidebar() {
 						px: 1.25,
 						py: 0.6,
 						borderRadius: 999,
-						border: `1px solid rgba(198,255,61,0.3)`,
-						bgcolor: 'rgba(198,255,61,0.06)',
+						border: `1px solid ${tokens.pillLime.border}`,
+						bgcolor: tokens.pillLime.bg,
 						alignSelf: 'flex-start',
 					}}
 				>
@@ -132,9 +139,14 @@ export function Sidebar() {
 						icon={<EmailIcon sx={{ fontSize: 15 }} />}
 						text={site.email}
 						action={
-							<Tooltip title="Copy email">
-								<IconButton size="small" onClick={copyEmail} sx={{ color: tokens.text.muted }}>
-									<ContentCopyIcon sx={{ fontSize: 14 }} />
+							<Tooltip title={copied ? 'Copied!' : 'Copy email'}>
+								<IconButton
+									size="small"
+									onClick={copyEmail}
+									aria-label={copied ? 'Email copied' : 'Copy email'}
+									sx={{ color: copied ? tokens.lime : tokens.text.muted }}
+								>
+									{copied ? <CheckIcon sx={{ fontSize: 14 }} /> : <ContentCopyIcon sx={{ fontSize: 14 }} />}
 								</IconButton>
 							</Tooltip>
 						}

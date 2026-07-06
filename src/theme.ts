@@ -34,6 +34,16 @@ export const palettes = {
 		sidebarBg: 'rgba(7,10,18,0.62)',
 		chromeBarBg: 'rgba(7,10,18,0.65)',
 		togglePillBg: 'rgba(7,10,18,0.45)',
+		pillLimeBg: 'rgba(198,255,61,0.06)',
+		pillLimeBorder: 'rgba(198,255,61,0.28)',
+		primaryTint: 'rgba(124,231,255,0.05)',
+		primaryBorder: 'rgba(124,231,255,0.25)',
+		primaryGlow: 'rgba(124,231,255,0.14)',
+		spotlight: 'rgba(124,231,255,0.16)',
+		mascotBody1: '#1B2230',
+		mascotBody2: '#0C111B',
+		mascotEye: '#060912',
+		mascotPupil: '#EDF1F7',
 	},
 	light: {
 		bg: '#F6F7FA',
@@ -66,6 +76,16 @@ export const palettes = {
 		sidebarBg: 'rgba(255,255,255,0.55)',
 		chromeBarBg: 'rgba(247,249,252,0.82)',
 		togglePillBg: 'rgba(255,255,255,0.65)',
+		pillLimeBg: 'rgba(79,138,18,0.08)',
+		pillLimeBorder: 'rgba(79,138,18,0.32)',
+		primaryTint: 'rgba(0,145,181,0.06)',
+		primaryBorder: 'rgba(0,145,181,0.28)',
+		primaryGlow: 'rgba(0,145,181,0.14)',
+		spotlight: 'rgba(0,145,181,0.12)',
+		mascotBody1: '#FFFFFF',
+		mascotBody2: '#DFE6EF',
+		mascotEye: '#FFFFFF',
+		mascotPupil: '#0F1419',
 	},
 } as const
 
@@ -89,6 +109,21 @@ export const tokens = {
 	lime: 'var(--lime)',
 	danger: 'var(--danger)',
 	gradient: 'var(--gradient)',
+	pillLime: {
+		bg: 'var(--pill-lime-bg)',
+		border: 'var(--pill-lime-border)',
+	},
+	primaryTint: 'var(--primary-tint)',
+	primaryBorder: 'var(--primary-border)',
+	primaryGlow: 'var(--primary-glow)',
+	spotlight: 'var(--spotlight)',
+	selection: 'var(--selection-bg)',
+	mascot: {
+		body1: 'var(--mascot-body-1)',
+		body2: 'var(--mascot-body-2)',
+		eye: 'var(--mascot-eye)',
+		pupil: 'var(--mascot-pupil)',
+	},
 }
 
 export const fonts = {
@@ -130,6 +165,16 @@ function paletteToVars(p: Palette) {
 		'--sidebar-bg': p.sidebarBg,
 		'--chrome-bar-bg': p.chromeBarBg,
 		'--toggle-pill-bg': p.togglePillBg,
+		'--pill-lime-bg': p.pillLimeBg,
+		'--pill-lime-border': p.pillLimeBorder,
+		'--primary-tint': p.primaryTint,
+		'--primary-border': p.primaryBorder,
+		'--primary-glow': p.primaryGlow,
+		'--spotlight': p.spotlight,
+		'--mascot-body-1': p.mascotBody1,
+		'--mascot-body-2': p.mascotBody2,
+		'--mascot-eye': p.mascotEye,
+		'--mascot-pupil': p.mascotPupil,
 	}
 }
 

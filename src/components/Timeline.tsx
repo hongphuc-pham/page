@@ -34,7 +34,7 @@ export function Timeline({ items }: { items: TimelineItem[] }) {
 							height: 10,
 							borderRadius: '50%',
 							bgcolor: tokens.primary,
-							boxShadow: '0 0 0 4px rgba(124,231,255,0.12)',
+							boxShadow: `0 0 0 4px ${tokens.primaryGlow}`,
 						}}
 					/>
 
