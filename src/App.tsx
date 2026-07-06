@@ -1,12 +1,12 @@
 import { RouterProvider } from 'react-router-dom'
-import { router } from './router'
-import { PainterlyBackground } from './components/PainterlyBackground'
+import { GrainOverlay } from './components/GrainOverlay'
 import { ThemeToggle } from './components/ThemeToggle'
+import { router } from './router'
 
 export function App() {
 	return (
 		<>
-			<PainterlyBackground />
+			<GrainOverlay />
 			<ThemeToggle />
 			<RouterProvider router={router} />
 		</>

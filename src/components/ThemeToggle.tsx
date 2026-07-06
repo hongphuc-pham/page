@@ -44,19 +44,20 @@ export function ThemeToggle() {
 	const label = isDark ? 'Switch to light theme' : 'Switch to dark theme'
 
 	return (
-		<Box
-			sx={{
+		<div
+			// Plain div (not MUI Box) to avoid MUI's TS2590 sx union-type blowup on
+			// this container; the interactive button below keeps its sx pseudo-states.
+			style={{
 				position: 'fixed',
-				top: { xs: 12, md: 18 },
-				right: { xs: 12, md: 18 },
+				top: 16,
+				right: 16,
 				zIndex: 20,
 				display: 'flex',
 				alignItems: 'center',
-				gap: 0.75,
-				px: 1.25,
-				py: 0.6,
+				gap: '6px',
+				padding: '5px 10px',
 				borderRadius: 999,
-				bgcolor: 'var(--toggle-pill-bg)',
+				background: 'var(--toggle-pill-bg)',
 				border: `1px solid ${tokens.line}`,
 				backdropFilter: 'blur(16px) saturate(140%)',
 				WebkitBackdropFilter: 'blur(16px) saturate(140%)',
@@ -103,6 +104,6 @@ export function ThemeToggle() {
 					</Box>
 				</Box>
 			</Tooltip>
-		</Box>
+		</div>
 	)
 }

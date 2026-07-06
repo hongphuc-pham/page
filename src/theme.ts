@@ -3,16 +3,16 @@ import { createTheme } from '@mui/material/styles'
 // Concrete color values per mode. Drive everything else off these.
 export const palettes = {
 	dark: {
-		bg: '#0A0D14',
-		bgElevated: '#0E131C',
-		surface: '#12161F',
-		card: '#161B26',
-		bodyBg: '#05070D',
-		line: 'rgba(255,255,255,0.08)',
-		lineSoft: 'rgba(255,255,255,0.04)',
-		textPrimary: '#EDF1F7',
-		textSecondary: '#A4ACBD',
-		textMuted: '#6B7388',
+		bg: '#0A0A0B',
+		bgElevated: '#101012',
+		surface: '#131315',
+		card: '#17171A',
+		bodyBg: '#070708',
+		line: 'rgba(240,236,226,0.10)',
+		lineSoft: 'rgba(240,236,226,0.05)',
+		textPrimary: '#F1ECE2',
+		textSecondary: '#ABA79D',
+		textMuted: '#726E66',
 		primary: '#7CE7FF',
 		accent: '#FFB02E',
 		lime: '#C6FF3D',
@@ -40,10 +40,8 @@ export const palettes = {
 		primaryBorder: 'rgba(124,231,255,0.25)',
 		primaryGlow: 'rgba(124,231,255,0.14)',
 		spotlight: 'rgba(124,231,255,0.16)',
-		mascotBody1: '#1B2230',
-		mascotBody2: '#0C111B',
-		mascotEye: '#060912',
-		mascotPupil: '#EDF1F7',
+		scrimH: 'linear-gradient(90deg, rgba(7,7,8,0.88) 0%, rgba(7,7,8,0.55) 38%, rgba(7,7,8,0) 62%)',
+		scrimV: 'linear-gradient(180deg, rgba(7,7,8,0.55), rgba(7,7,8,0.1) 55%, rgba(7,7,8,0.78))',
 	},
 	light: {
 		bg: '#F6F7FA',
@@ -82,10 +80,8 @@ export const palettes = {
 		primaryBorder: 'rgba(0,145,181,0.28)',
 		primaryGlow: 'rgba(0,145,181,0.14)',
 		spotlight: 'rgba(0,145,181,0.12)',
-		mascotBody1: '#FFFFFF',
-		mascotBody2: '#DFE6EF',
-		mascotEye: '#FFFFFF',
-		mascotPupil: '#0F1419',
+		scrimH: 'linear-gradient(90deg, rgba(237,239,244,0.94) 0%, rgba(237,239,244,0.62) 38%, rgba(237,239,244,0) 62%)',
+		scrimV: 'linear-gradient(180deg, rgba(237,239,244,0.6), rgba(237,239,244,0.15) 55%, rgba(237,239,244,0.82))',
 	},
 } as const
 
@@ -118,16 +114,13 @@ export const tokens = {
 	primaryGlow: 'var(--primary-glow)',
 	spotlight: 'var(--spotlight)',
 	selection: 'var(--selection-bg)',
-	mascot: {
-		body1: 'var(--mascot-body-1)',
-		body2: 'var(--mascot-body-2)',
-		eye: 'var(--mascot-eye)',
-		pupil: 'var(--mascot-pupil)',
-	},
+	scrimH: 'var(--scrim-h)',
+	scrimV: 'var(--scrim-v)',
 }
 
 export const fonts = {
-	display: 'Inter, "Söhne", "Helvetica Neue", system-ui, -apple-system, "Segoe UI", sans-serif',
+	// Warm editorial serif for display — carries the cinematic tone.
+	display: '"Fraunces", "Times New Roman", Georgia, serif',
 	body: 'Inter, "Söhne", "Helvetica Neue", system-ui, -apple-system, "Segoe UI", sans-serif',
 	mono: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
 }
@@ -171,10 +164,8 @@ function paletteToVars(p: Palette) {
 		'--primary-border': p.primaryBorder,
 		'--primary-glow': p.primaryGlow,
 		'--spotlight': p.spotlight,
-		'--mascot-body-1': p.mascotBody1,
-		'--mascot-body-2': p.mascotBody2,
-		'--mascot-eye': p.mascotEye,
-		'--mascot-pupil': p.mascotPupil,
+		'--scrim-h': p.scrimH,
+		'--scrim-v': p.scrimV,
 	}
 }
 
@@ -190,12 +181,12 @@ export const theme = createTheme({
 	shape: { borderRadius: 14 },
 	typography: {
 		fontFamily: fonts.body,
-		h1: { fontFamily: fonts.display, fontWeight: 700, letterSpacing: '-0.035em', lineHeight: 1.02 },
-		h2: { fontFamily: fonts.display, fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.05 },
-		h3: { fontFamily: fonts.display, fontWeight: 600, letterSpacing: '-0.025em' },
-		h4: { fontFamily: fonts.display, fontWeight: 600, letterSpacing: '-0.02em' },
-		h5: { fontFamily: fonts.display, fontWeight: 600, letterSpacing: '-0.015em' },
-		h6: { fontFamily: fonts.display, fontWeight: 600, letterSpacing: '-0.01em' },
+		h1: { fontFamily: fonts.display, fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1.0 },
+		h2: { fontFamily: fonts.display, fontWeight: 500, letterSpacing: '-0.018em', lineHeight: 1.03 },
+		h3: { fontFamily: fonts.display, fontWeight: 500, letterSpacing: '-0.015em' },
+		h4: { fontFamily: fonts.display, fontWeight: 500, letterSpacing: '-0.012em' },
+		h5: { fontFamily: fonts.display, fontWeight: 500, letterSpacing: '-0.01em' },
+		h6: { fontFamily: fonts.display, fontWeight: 500, letterSpacing: '-0.008em' },
 		body1: { letterSpacing: '-0.005em' },
 		body2: { letterSpacing: '-0.003em' },
 		subtitle2: { fontWeight: 600 },
@@ -208,7 +199,7 @@ export const theme = createTheme({
 				':root': paletteToVars(palettes.dark),
 				'[data-theme="dark"]': paletteToVars(palettes.dark),
 				'[data-theme="light"]': paletteToVars(palettes.light),
-				html: { scrollBehavior: 'smooth' },
+				// note: no CSS scroll-behavior — Lenis owns smooth scrolling
 				body: {
 					backgroundColor: 'var(--body-bg)',
 					color: 'var(--text-primary)',
