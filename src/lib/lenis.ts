@@ -28,10 +28,13 @@ export function destroySmoothScroll() {
 	lenis = null
 }
 
-/** Scroll to a section by element id — Lenis when active, native otherwise. */
+/** Scroll to a section by element id — Lenis when active, native otherwise.
+ *  Lands a little INTO the pin so the scene's intro reveal has already played
+ *  (otherwise you arrive on hidden, pre-animation content). */
 export function scrollToSection(id: string) {
 	const el = document.getElementById(id)
 	if (!el) return
-	if (lenis) lenis.scrollTo(el)
+	const offset = typeof window !== 'undefined' ? window.innerHeight * 0.55 : 0
+	if (lenis) lenis.scrollTo(el, { offset })
 	else el.scrollIntoView({ behavior: 'smooth' })
 }

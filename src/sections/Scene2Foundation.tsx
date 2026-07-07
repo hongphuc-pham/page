@@ -20,7 +20,7 @@ export function Scene2Foundation({ reduced, isMobile }: { reduced: boolean; isMo
 				.fromTo(q('.detail'), { autoAlpha: 0, y: 50 }, { autoAlpha: 1, y: 0, stagger: 1.5, duration: 4 }, '-=1')
 				.to(q('.scene-inner'), { autoAlpha: 0, y: -80, duration: 4 }, '+=3')
 		},
-		{ reduced, isMobile, length: 160 },
+		{ reduced, isMobile, length: 160, beat: 1 },
 	)
 
 	return (

@@ -7,12 +7,13 @@ import { AudioToggle } from '../components/AudioToggle'
 import { ChapterDots } from '../components/ChapterDots'
 import { ScrollProgressBar } from '../components/ScrollProgressBar'
 import { destroySmoothScroll, initSmoothScroll } from '../lib/lenis'
-import { scrollProgress } from '../scene/useScrollProgress'
+import { beatPos, scrollProgress, SCENE_COUNT } from '../scene/useScrollProgress'
 import { Scene1Hook } from '../sections/Scene1Hook'
 import { Scene2Foundation } from '../sections/Scene2Foundation'
 import { Scene3Now } from '../sections/Scene3Now'
 import { Scene4Approach } from '../sections/Scene4Approach'
-import { Scene5Contact } from '../sections/Scene5Contact'
+import { Scene5Experience } from '../sections/Scene5Experience'
+import { Scene6Contact } from '../sections/Scene6Contact'
 import { useThemeMode } from '../utils/useThemeMode'
 
 // three.js + fiber live in their own lazy chunk — the DOM story is readable
@@ -34,7 +35,9 @@ export function Story() {
 			// top bar and chapter dots work.
 			const onScroll = () => {
 				const max = document.documentElement.scrollHeight - window.innerHeight
-				scrollProgress.value = max > 0 ? window.scrollY / max : 0
+				const p = max > 0 ? window.scrollY / max : 0
+				scrollProgress.value = p
+				beatPos.value = p * (SCENE_COUNT - 1)
 			}
 			onScroll()
 			window.addEventListener('scroll', onScroll, { passive: true })
@@ -81,7 +84,8 @@ export function Story() {
 				<Scene2Foundation reduced={reduced} isMobile={isMobile} />
 				<Scene3Now reduced={reduced} isMobile={isMobile} />
 				<Scene4Approach reduced={reduced} isMobile={isMobile} />
-				<Scene5Contact reduced={reduced} isMobile={isMobile} />
+				<Scene5Experience reduced={reduced} isMobile={isMobile} />
+				<Scene6Contact reduced={reduced} isMobile={isMobile} />
 			</Box>
 		</>
 	)

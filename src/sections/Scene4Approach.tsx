@@ -1,15 +1,15 @@
-import { Box, Chip } from '@mui/material'
+import { Box, Chip, Stack, Typography } from '@mui/material'
 import { useRef } from 'react'
 import { approach } from '../data/cv'
+import { fonts, tokens } from '../theme'
 import { Body, Headline, Kicker, SceneShell } from './SceneShell'
 import { useSceneTimeline } from './useSceneTimeline'
 
 /**
- * Beat 4 — APPROACH · scroll 0.60–0.80
- * The stack chips FLY IN from scattered positions around the viewport,
- * settle into their row, and the whole scene scrubs out (disappears) as you
- * roll to the CTA — per the "fly around to the row, then disappear" note.
- * Scatter offsets are deterministic (index-hashed), no Math.random.
+ * Beat 4 — APPROACH · scroll 0.500–0.667
+ * The stack is a CV-style skill matrix: category rows, each row's chips fly in
+ * from the side and settle. The whole scene scrubs out as you roll to the
+ * Experience beat.
  */
 export function Scene4Approach({ reduced, isMobile }: { reduced: boolean; isMobile: boolean }) {
 	const root = useRef<HTMLElement>(null)
@@ -17,38 +17,58 @@ export function Scene4Approach({ reduced, isMobile }: { reduced: boolean; isMobi
 	useSceneTimeline(
 		root,
 		(tl, q) => {
-			tl.fromTo(q('.line'), { autoAlpha: 0, y: 70 }, { autoAlpha: 1, y: 0, stagger: 1.5, duration: 4 })
-			const spreadX = isMobile ? 150 : 460
-			const spreadY = isMobile ? 240 : 300
-			q('.stack-chip').forEach((chip, i) => {
-				tl.fromTo(
-					chip,
-					{
-						x: Math.sin(i * 12.9898) * spreadX,
-						y: Math.cos(i * 78.233) * spreadY,
-						rotation: Math.sin(i * 3.7) * 40,
-						autoAlpha: 0,
-					},
-					{ x: 0, y: 0, rotation: 0, autoAlpha: 1, duration: 3 },
-					i === 0 ? '>-0.5' : '<0.6',
-				)
+			tl.fromTo(q('.line'), { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, stagger: 1.2, duration: 3 })
+			// each category row slides in and its chips pop
+			q('.skill-row').forEach((row, i) => {
+				tl.fromTo(row, { autoAlpha: 0, x: -40 }, { autoAlpha: 1, x: 0, duration: 2 }, i === 0 ? '>-0.5' : '<0.5')
 			})
-			tl.to(q('.scene-inner'), { autoAlpha: 0, y: -80, duration: 4 }, '+=3')
+			tl.fromTo(q('.skill-chip'), { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, stagger: 0.15, duration: 2 }, '<')
+			tl.to(q('.scene-inner'), { autoAlpha: 0, y: -70, duration: 3 }, '+=2.5')
 		},
-		{ reduced, isMobile, length: 220 },
+		{ reduced, isMobile, length: 220, beat: 3 },
 	)
 
 	return (
-		<SceneShell id="approach" rootRef={root}>
+		<SceneShell id="approach" rootRef={root} maxWidth={640}>
 			<Kicker className="line">{approach.kicker}</Kicker>
-			<Headline className="line">{approach.headline}</Headline>
+			<Headline className="line" size="md">
+				{approach.headline}
+			</Headline>
 			<Body className="line">{approach.body}</Body>
 
-			<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.25, mt: 3, maxWidth: 640 }}>
-				{approach.stack.map((item) => (
-					<Chip key={item} label={item} className="stack-chip" sx={{ willChange: 'transform' }} />
+			<Stack spacing={1.75} sx={{ mt: 3 }}>
+				{approach.stackGroups.map((g) => (
+					<Box
+						key={g.label}
+						className="skill-row"
+						sx={{
+							display: { xs: 'block', sm: 'grid' },
+							gridTemplateColumns: '140px 1fr',
+							gap: 2,
+							alignItems: 'start',
+						}}
+					>
+						<Typography
+							sx={{
+								fontFamily: fonts.mono,
+								fontSize: 11,
+								letterSpacing: '0.14em',
+								textTransform: 'uppercase',
+								color: tokens.text.muted,
+								pt: { sm: 0.75 },
+								mb: { xs: 0.75, sm: 0 },
+							}}
+						>
+							{g.label}
+						</Typography>
+						<Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
+							{g.items.map((it) => (
+								<Chip key={it} label={it} size="small" className="skill-chip" sx={{ willChange: 'transform' }} />
+							))}
+						</Stack>
+					</Box>
 				))}
-			</Box>
+			</Stack>
 		</SceneShell>
 	)
 }

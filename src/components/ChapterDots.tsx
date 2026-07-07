@@ -2,7 +2,7 @@ import { Tooltip } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { chapters } from '../data/cv'
 import { scrollToSection } from '../lib/lenis'
-import { scrollProgress, SCENE_COUNT } from '../scene/useScrollProgress'
+import { beatPos, SCENE_COUNT } from '../scene/useScrollProgress'
 import { tokens } from '../theme'
 
 /**
@@ -15,7 +15,7 @@ export function ChapterDots() {
 	useEffect(() => {
 		let raf = 0
 		const loop = () => {
-			const idx = Math.min(SCENE_COUNT - 1, Math.floor(scrollProgress.value * SCENE_COUNT))
+			const idx = Math.min(SCENE_COUNT - 1, Math.max(0, Math.round(beatPos.value)))
 			setActive((a) => (a === idx ? a : idx))
 			raf = requestAnimationFrame(loop)
 		}

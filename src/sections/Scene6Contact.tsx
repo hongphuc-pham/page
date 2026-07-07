@@ -18,11 +18,11 @@ const LINK_ICONS = {
 } as const
 
 /**
- * Beat 5 — CTA · scroll 0.80–1.00
+ * Beat 6 — CTA · scroll 0.833–1.00
  * Warm light returns, the shard settles. Real links, large tap targets —
  * no exit animation (it's the end of the film).
  */
-export function Scene5Contact({ reduced, isMobile }: { reduced: boolean; isMobile: boolean }) {
+export function Scene6Contact({ reduced, isMobile }: { reduced: boolean; isMobile: boolean }) {
 	const root = useRef<HTMLElement>(null)
 
 	useSceneTimeline(
@@ -30,7 +30,7 @@ export function Scene5Contact({ reduced, isMobile }: { reduced: boolean; isMobil
 		(tl, q) => {
 			tl.fromTo(q('.line'), { autoAlpha: 0, y: 70 }, { autoAlpha: 1, y: 0, stagger: 1.5, duration: 4 })
 		},
-		{ reduced, isMobile, length: 90 },
+		{ reduced, isMobile, length: 90, beat: 5 },
 	)
 
 	return (

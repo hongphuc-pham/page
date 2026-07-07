@@ -1,18 +1,26 @@
 # STORY — the cinematic CV
 
-One scroll, five beats. Scroll progress (0 → 1) is the single source of truth:
-it drives the camera spline, the hero shard, lighting temperature, and
-postprocessing. Beats map to equal fifths of total scroll.
+One scroll, six beats. The 3D scene tracks a continuous BEAT position
+(`beatPos`, 0 → 5), written by each scene's own ScrollTrigger as
+`beatIndex + localProgress`. This keeps the shard colour, camera, lighting and
+chapter dots in sync with the scene actually on screen even though scenes have
+different pin lengths. (The thin top progress bar uses the raw linear scroll
+fraction — that's the only thing that does.)
 
-## The five beats
+## The six beats
 
-| # | Beat | Scroll | Section id | On screen |
-|---|------|--------|------------|-----------|
-| 1 | HOOK | 0.00–0.20 | `#hook` | "Software that thinks with you." Name, role, positioning. Warm light, calm shard, faint wireframe. |
-| 2 | FOUNDATION | 0.20–0.40 | `#foundation` | ANZ NZ Java/Spring Boot DR platform, the 15–20h → hours-earlier story, Kau Mau Te Wehi Award, degrees. Cool light, wireframe reveals. |
-| 3 | NOW | 0.40–0.60 | `#now` | CREST (Dec 2023 – Jun 2026), features across 4–5 platforms; project cards deal one-by-one onto a deck (Luna, CareHub, SoftSec Intel, ElevexAI, AIDFest, DEP & VIP). Shard fractures into fragments. |
-| 4 | APPROACH | 0.60–0.80 | `#approach` | "AI-assisted. Structured. Honest." Stack chips fly in from around the viewport, settle into a row, then the scene exits. Fragments reassemble. |
-| 5 | CONTACT | 0.80–1.00 | `#contact` | "Available for new roles." Email / LinkedIn / GitHub / CV download. Warm light returns, shard settles. |
+| # | Beat | beatPos | Section id | On screen |
+|---|------|---------|------------|-----------|
+| 1 | HOOK | 0 | `#hook` | "Software that thinks with you." Name, role, positioning. Warm light, calm shard. |
+| 2 | FOUNDATION | 1 | `#foundation` | ANZ NZ Java/Spring Boot DR platform, the 15–20h → hours-earlier story, Kau Mau Te Wehi Award, degrees. Cool light, wireframe reveals. |
+| 3 | NOW | 2 | `#now` | CREST intro; project cards are a scroll-driven STACK that swaps card-by-card, each with a live screenshot thumbnail + links (Luna, CareHub, SoftSec Intel, ElevexAI, AIDFest, DEP & VIP). Shard fractures mid-beat. |
+| 4 | APPROACH | 3 | `#approach` | "AI-assisted. Structured. Honest." CV-style skill matrix — category rows (Languages / Frontend / Backend / Databases / Infra & CI/CD / AI & Data) fly in and settle. |
+| 5 | EXPERIENCE | 4 | `#experience` | "Where I've shipped." CV-style listing of the two main roles (CREST + ANZ) with dated bullet points + award. |
+| 6 | CONTACT | 5 | `#contact` | "Available for new roles." Email / LinkedIn / GitHub / CV download. Warm light returns, shard settles. |
+
+Per-scene pin lengths are set in each `Scene*.tsx` (the `length` option). Chapter
+dots and `scrollToSection` land ~0.55×viewport into a pin so you arrive on
+revealed content, not the pre-animation state.
 
 ## Where to edit what
 

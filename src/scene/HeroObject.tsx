@@ -2,7 +2,7 @@ import { useFrame } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import type { ThemeMode } from '../theme'
-import { beatLerp, range, scrollProgress } from './useScrollProgress'
+import { beatFraction, beatLerp, beatPos, range } from './useScrollProgress'
 
 /**
  * The hero object: a low-poly icosahedron shard — crystal / compiled artifact.
@@ -18,15 +18,15 @@ import { beatLerp, range, scrollProgress } from './useScrollProgress'
  *   5 CONTACT     still, warm
  */
 
-// displacement amplitude per beat
-const AMP_STOPS = [0.05, 0.08, 0.16, 0.05, 0.03]
+// displacement amplitude per beat (6 beats)
+const AMP_STOPS = [0.05, 0.08, 0.16, 0.06, 0.05, 0.03]
 // wireframe shell opacity per beat
-const WIRE_STOPS = [0.12, 0.5, 0.35, 0.28, 0.15]
+const WIRE_STOPS = [0.12, 0.5, 0.35, 0.3, 0.4, 0.15]
 
-// color stops per beat, per theme (cyan → lime → violet → amber journey)
+// color stops per beat, per theme (cyan → lime → violet → cyan → amber journey)
 const COLOR_STOPS: Record<ThemeMode, string[]> = {
-	dark: ['#7CE7FF', '#7CE7FF', '#C6FF3D', '#B482FF', '#FFB02E'],
-	light: ['#0091B5', '#0091B5', '#4F8A12', '#7A4FC9', '#C25E00'],
+	dark: ['#7CE7FF', '#7CE7FF', '#C6FF3D', '#B482FF', '#7CE7FF', '#FFB02E'],
+	light: ['#0091B5', '#0091B5', '#4F8A12', '#7A4FC9', '#0091B5', '#C25E00'],
 }
 
 // deterministic fragment directions (unit-ish vectors)
@@ -82,7 +82,8 @@ export function HeroObject({ mode, animate, detail }: { mode: ThemeMode; animate
 	}, [])
 
 	useFrame((state) => {
-		const p = animate ? scrollProgress.value : 0.05
+		// p = 0→1 across the whole story, derived from the true on-screen beat
+		const p = animate ? beatFraction() : 0.05
 		const t = animate ? state.clock.elapsedTime : 0
 
 		// ---- rotation: slow idle spin + half a turn across the whole story
@@ -125,8 +126,9 @@ export function HeroObject({ mode, animate, detail }: { mode: ThemeMode; animate
 			}
 		}
 
-		// ---- fracture: explode through beat 3, reassemble entering beat 4
-		const fracture = range(p, 0.42, 0.52) * (1 - range(p, 0.58, 0.72))
+		// ---- fracture: explode mid-NOW (beat index 2), reassemble before APPROACH
+		const bp = animate ? beatPos.value : 0
+		const fracture = range(bp, 2.15, 2.45) * (1 - range(bp, 2.55, 2.85))
 		if (frags.current) {
 			frags.current.children.forEach((child, i) => {
 				const dir = FRAGMENT_DIRS[i]

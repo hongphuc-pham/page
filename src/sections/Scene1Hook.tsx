@@ -36,7 +36,7 @@ export function Scene1Hook({ reduced, isMobile }: { reduced: boolean; isMobile: 
 		(tl, q) => {
 			tl.to(q('.scene-inner'), { autoAlpha: 0, y: -90, scale: 0.97, duration: 5 }, 3)
 		},
-		{ reduced, isMobile, length: 110 },
+		{ reduced, isMobile, length: 110, beat: 0 },
 	)
 
 	return (

@@ -1,7 +1,7 @@
 import { useFrame, useThree } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
-import { beatLerp, scrollProgress } from './useScrollProgress'
+import { beatFraction, beatLerp } from './useScrollProgress'
 
 /**
  * Camera path — one keyframe per beat, sampled by global scroll progress
@@ -15,11 +15,13 @@ import { beatLerp, scrollProgress } from './useScrollProgress'
  */
 // The shard sits at world origin. We look at a point to its LEFT so the object
 // renders in the RIGHT third of the screen, leaving the left clear for text.
+// One keyframe per beat: hook, foundation, now, approach, experience, contact.
 const CAM_KEYFRAMES: [number, number, number][] = [
 	[0, 0.1, 6.6],
 	[1.4, 0.9, 5.6],
 	[-1.6, 0.6, 5.0],
 	[0.6, 1.8, 6.0],
+	[-1.2, 1.0, 5.4],
 	[0, 0.0, 7.0],
 ]
 
@@ -29,12 +31,13 @@ const LOOK_KEYFRAMES: [number, number, number][] = [
 	[-1.5, 0.15, 0],
 	[-1.9, 0.0, 0],
 	[-1.6, 0.25, 0],
+	[-1.7, 0.1, 0],
 	[-1.7, 0.0, 0],
 ]
 
 /** Lighting temperature per beat — warm open/close, cooler mid-story. */
-const WARM_INTENSITY = [1.1, 0.4, 0.35, 0.5, 1.2]
-const COOL_INTENSITY = [0.55, 1.1, 1.2, 1.0, 0.55]
+const WARM_INTENSITY = [1.1, 0.4, 0.35, 0.5, 0.7, 1.2]
+const COOL_INTENSITY = [0.55, 1.1, 1.2, 1.0, 0.9, 0.55]
 
 export function CameraRig({ animate, warmColor, coolColor }: { animate: boolean; warmColor: string; coolColor: string }) {
 	const camera = useThree((s) => s.camera)
@@ -52,7 +55,7 @@ export function CameraRig({ animate, warmColor, coolColor }: { animate: boolean;
 	)
 
 	useFrame((state) => {
-		const p = animate ? scrollProgress.value : 0
+		const p = animate ? beatFraction() : 0
 		const target = curve.getPoint(p)
 		// gentle pointer parallax on top of the spline position
 		if (animate) {
