@@ -15,7 +15,9 @@ export function ChapterDots() {
 	useEffect(() => {
 		let raf = 0
 		const loop = () => {
-			const idx = Math.min(SCENE_COUNT - 1, Math.max(0, Math.round(beatPos.value)))
+			// floor, not round: each scene owns the whole [beat, beat+1] range, so
+			// the active dot must stay on that scene until the next one enters.
+			const idx = Math.min(SCENE_COUNT - 1, Math.max(0, Math.floor(beatPos.value)))
 			setActive((a) => (a === idx ? a : idx))
 			raf = requestAnimationFrame(loop)
 		}

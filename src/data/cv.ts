@@ -79,7 +79,7 @@ export type Project = {
 /** Beat 3 — RECENT WORK (scroll 33.3–50%) */
 export const recentWork = {
 	kicker: '// 03 · recent work',
-	headline: 'Research that ships.',
+	headline: 'Built to ship.',
 	body:
 		'Software Engineer at CREST, University of Adelaide (Dec 2023 – Jun 2026). ' +
 		'Built features across the stack within 4–5 web and mobile platforms — ' +

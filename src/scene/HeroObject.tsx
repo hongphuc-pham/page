@@ -2,6 +2,7 @@ import { useFrame } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import type { ThemeMode } from '../theme'
+import { holoState } from './Orbits'
 import { beatFraction, beatLerp, beatPos, range } from './useScrollProgress'
 
 /**
@@ -114,15 +115,20 @@ export function HeroObject({ mode, animate, detail }: { mode: ThemeMode; animate
 			tmpColor.copy(colors[ci]).lerp(colors[ci + 1], s - ci)
 			const coreMat = mesh.material as THREE.MeshStandardMaterial
 			coreMat.color.copy(tmpColor)
-			coreMat.emissive.copy(tmpColor).multiplyScalar(0.15)
+			// Focus-pull: while the featured hologram is on screen it is the hero,
+			// so the shard recedes — dimmer core, softer wireframe & halo.
+			const recede = holoState.present
+			coreMat.emissive.copy(tmpColor).multiplyScalar(0.15 * (1 - recede * 0.85))
+			coreMat.opacity = 0.16 * (1 - recede * 0.82)
 			if (wire.current) {
 				const wireMat = wire.current.material as THREE.MeshBasicMaterial
 				wireMat.color.copy(tmpColor)
-				wireMat.opacity = beatLerp(WIRE_STOPS, p)
+				wireMat.opacity = beatLerp(WIRE_STOPS, p) * (1 - recede * 0.82)
 			}
 			if (halo.current) {
 				const haloMat = halo.current.material as THREE.PointsMaterial
 				haloMat.color.copy(tmpColor)
+				haloMat.opacity = (mode === 'dark' ? 0.5 : 0.7) * (1 - recede * 0.75)
 			}
 		}
 

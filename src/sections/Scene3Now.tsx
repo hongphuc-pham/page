@@ -1,6 +1,9 @@
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import NorthEastIcon from '@mui/icons-material/NorthEast'
-import { Box, Chip, Link, Stack, Typography } from '@mui/material'
-import { useRef } from 'react'
+import { Box, Chip, IconButton, Link, Stack, Typography } from '@mui/material'
+import { motion, useReducedMotion } from 'framer-motion'
+import { useRef, useState } from 'react'
 import { recentWork, type Project } from '../data/cv'
 import { fonts, tokens } from '../theme'
 import { Body, Headline, Kicker, SceneShell } from './SceneShell'
@@ -8,71 +11,35 @@ import { useSceneTimeline } from './useSceneTimeline'
 
 /**
  * Beat 3 — NOW · scroll 0.333–0.500
- * The project cards are a scroll-driven STACK: they sit on top of one another
- * like a deck, and scrubbing swaps the front card off the top to reveal the
- * next (a "card swap" / model-viewer feel). Each card shows a live screenshot
- * thumbnail + links. The shard fractures behind it.
- *
- * Positioning is done in a single onUpdate from a proxy tween so the whole
- * stack moves as one continuous function of scroll (smooth, no per-card races).
+ * The project work is an interactive CAROUSEL: the front card is shown in full
+ * and arrows / dots browse all five at any time, decoupled from scroll — every
+ * card is always reachable and readable. Non-pinned (like Experience) so the
+ * content is naturally scrollable; a scrub trigger just tracks the beat.
  */
 
-const CARD_H = 320 // px — fixed so the absolute stack has a stable footprint
-const THUMB_H = 168 // px — thumbnail height (leaves room for name + links)
-
-function positionStack(cards: Element[], active: number) {
-	cards.forEach((el, i) => {
-		const card = el as HTMLElement
-		const d = i - active // <0 leaving/left, 0 front, >0 waiting behind
-		let y: number, scale: number, opacity: number, rot: number, z: number
-		if (d < 0) {
-			const t = Math.min(1, -d) // 0→1 as it flies off the top
-			y = -t * 220
-			scale = 1 - t * 0.12
-			opacity = 1 - t
-			rot = -t * 5
-			z = 500
-		} else {
-			const dd = Math.min(d, 3)
-			y = dd * 20
-			scale = 1 - dd * 0.05
-			opacity = d > 3.2 ? 0 : 1 - dd * 0.16
-			rot = 0
-			z = 100 - Math.round(d * 10)
-		}
-		card.style.transform = `translateY(${y.toFixed(1)}px) scale(${scale.toFixed(3)}) rotate(${rot.toFixed(2)}deg)`
-		card.style.opacity = opacity.toFixed(3)
-		card.style.zIndex = String(z)
-		card.style.pointerEvents = d >= 0 && d < 0.5 ? 'auto' : 'none'
-	})
-}
+const CARD_H = 336 // px — fixed so the swap doesn't reflow the page
+const THUMB_H = 176 // px — thumbnail height (leaves room for name + links)
 
 export function Scene3Now({ reduced, isMobile }: { reduced: boolean; isMobile: boolean }) {
 	const root = useRef<HTMLElement>(null)
 	const projects = recentWork.projects
+	const prefersReduced = useReducedMotion()
+	const [active, setActive] = useState(0)
+	const [dir, setDir] = useState(1)
 
 	useSceneTimeline(
 		root,
 		(tl, q) => {
-			const cards = q('.deck-card')
-			positionStack(cards, 0)
-			tl.fromTo(q('.line'), { autoAlpha: 0, y: 60 }, { autoAlpha: 1, y: 0, stagger: 1.1, duration: 3 })
-			// scrub the stack from card 0 → last card
-			const proxy = { active: 0 }
-			tl.to(
-				proxy,
-				{
-					active: projects.length - 1,
-					duration: projects.length * 3,
-					ease: 'none',
-					onUpdate: () => positionStack(cards, proxy.active),
-				},
-				'>-0.5',
-			)
-			tl.to(q('.scene-inner'), { autoAlpha: 0, y: -70, duration: 3 }, '+=1.5')
+			tl.fromTo(q('.line'), { autoAlpha: 0, y: 32 }, { autoAlpha: 1, y: 0, stagger: 0.12, duration: 0.6 })
+			tl.fromTo(q('.deck'), { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.7 }, '-=0.3')
 		},
-		{ reduced, isMobile, length: 320, beat: 2 },
+		{ reduced, isMobile, beat: 2, pin: false },
 	)
+
+	const goTo = (next: number) => {
+		setDir(next > active || (active === projects.length - 1 && next === 0) ? 1 : -1)
+		setActive((next + projects.length) % projects.length)
+	}
 
 	return (
 		<SceneShell id="now" rootRef={root} maxWidth={560}>
@@ -97,7 +64,6 @@ export function Scene3Now({ reduced, isMobile }: { reduced: boolean; isMobile: b
 				{recentWork.showcaseHeading}
 			</Typography>
 
-			{/* Card stack. Reduced motion → plain vertical list. */}
 			{reduced ? (
 				<Stack spacing={2}>
 					{projects.map((p) => (
@@ -105,23 +71,71 @@ export function Scene3Now({ reduced, isMobile }: { reduced: boolean; isMobile: b
 					))}
 				</Stack>
 			) : (
-				<Box sx={{ position: 'relative', height: CARD_H + 70 }}>
-					{projects.map((p, i) => (
+				<Box className="deck">
+					{/* front card — re-mounts and slides in on each change (keyed by
+					    active, so it can never get stuck on a stale card) */}
+					<Box sx={{ position: 'relative', minHeight: CARD_H, overflow: 'hidden', borderRadius: 3 }}>
 						<Box
-							key={p.name}
-							className="deck-card"
-							sx={{
-								position: 'absolute',
-								top: 0,
-								left: 0,
-								right: 0,
-								willChange: 'transform, opacity',
-								transformOrigin: '50% 0%',
-							}}
+							key={active}
+							component={motion.div}
+							initial={prefersReduced ? false : { opacity: 0, x: dir * 44 }}
+							animate={{ opacity: 1, x: 0 }}
+							transition={{ duration: 0.3, ease: 'easeOut' }}
 						>
-							<ProjectCard project={p} index={i} total={projects.length} height={CARD_H} />
+							<ProjectCard project={projects[active]} index={active} total={projects.length} height={CARD_H} />
 						</Box>
-					))}
+					</Box>
+
+					{/* controls: prev · dots · next */}
+					<Stack direction="row" alignItems="center" justifyContent="center" spacing={1.25} sx={{ mt: 2 }}>
+						<IconButton
+							aria-label="Previous project"
+							onClick={() => goTo(active - 1)}
+							sx={{ color: tokens.text.secondary, border: `1px solid ${tokens.line}`, '&:hover': { borderColor: tokens.primaryBorder, color: tokens.primary } }}
+						>
+							<ChevronLeftIcon />
+						</IconButton>
+						<Stack direction="row" alignItems="center" spacing={1}>
+							{projects.map((p, i) => (
+								<Box
+									key={p.name}
+									component="button"
+									type="button"
+									aria-label={`Show ${p.name}`}
+									aria-current={i === active}
+									onClick={() => goTo(i)}
+									sx={{
+										p: 0,
+										border: 'none',
+										cursor: 'pointer',
+										background: 'transparent',
+										display: 'grid',
+										placeItems: 'center',
+										width: 18,
+										height: 18,
+									}}
+								>
+									<Box
+										sx={{
+											width: i === active ? 20 : 8,
+											height: 8,
+											borderRadius: 999,
+											bgcolor: i === active ? tokens.primary : tokens.text.muted,
+											opacity: i === active ? 1 : 0.45,
+											transition: 'all 220ms ease',
+										}}
+									/>
+								</Box>
+							))}
+						</Stack>
+						<IconButton
+							aria-label="Next project"
+							onClick={() => goTo(active + 1)}
+							sx={{ color: tokens.text.secondary, border: `1px solid ${tokens.line}`, '&:hover': { borderColor: tokens.primaryBorder, color: tokens.primary } }}
+						>
+							<ChevronRightIcon />
+						</IconButton>
+					</Stack>
 				</Box>
 			)}
 		</SceneShell>

@@ -4,6 +4,7 @@ import { palettes, type ThemeMode } from '../theme'
 import { CameraRig } from './CameraRig'
 import { Effects } from './Effects'
 import { HeroObject } from './HeroObject'
+import { Orbits } from './Orbits'
 
 /**
  * The one persistent full-viewport canvas. Fixed behind the DOM overlay,
@@ -50,6 +51,7 @@ export default function CanvasRoot({
 			>
 				<CameraRig animate={animate} warmColor={palette.accent} coolColor={palette.primary} />
 				<HeroObject mode={mode} animate={animate} detail={isMobile ? 0 : 1} />
+				<Orbits mode={mode} isMobile={isMobile} />
 				{!isMobile && animate && <Effects />}
 			</Canvas>
 		</SceneErrorBoundary>
