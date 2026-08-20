@@ -39,7 +39,7 @@ export function Scene6Contact({ reduced, isMobile }: { reduced: boolean; isMobil
 			// The loop closes. Same grid as beat 1, cleared, one cursor blinking.
 			// 'loop' rather than 'scrub' on purpose: by here the reader has stopped
 			// scrolling, and a frozen cursor would read as broken instead of waiting.
-			backdrop={<FrameScrub range={EMPTY} mode="loop" loopMs={2200} reduced={reduced} opacity={0.32} />}
+			backdrop={<FrameScrub range={EMPTY} mode="loop" beat={5} loopMs={2200} reduced={reduced} opacity={0.32} />}
 		>
 			<Box>
 				<Kicker className="line">{cta.kicker}</Kicker>

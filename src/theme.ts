@@ -515,21 +515,41 @@ section[id] { scroll-margin-top: 24px; }
 
 /* Award pill (sections/Scene2Foundation.tsx). A class, not <Box sx>, because a
    bare MUI <Box> on its own is enough to trip TS2590 in this project. */
+/* The award, as a medal inset rather than a chip. Comic books put medals in
+   circular insets, and the shape is doing real work here: the badge hangs off
+   the SAME rail the before/after/result argument runs down (hence the negative
+   left margin, which cancels .ba's 22px padding and lands the circle on the
+   rail at left:3px). It reads as a seal stamped on the argument, not as a
+   tag floating underneath it. */
 .award-pill {
-	display: inline-flex;
+	position: relative;
+	display: flex;
 	align-items: center;
-	gap: 8px;
-	padding: 6px 14px;
-	margin-bottom: 32px;
-	border-radius: 999px;
-	border: 1px solid var(--pill-lime-border);
-	background: var(--pill-lime-bg);
+	gap: 14px;
+	margin: -8px 0 32px -22px;
+	padding-right: 8px;
 	font-family: ${fonts.mono};
 	font-size: 12px;
-	letter-spacing: 0.08em;
-	color: var(--text-primary);
+	line-height: 1.5;
+	letter-spacing: 0.06em;
+	color: var(--text-secondary);
+	max-width: 46ch;
 }
-.award-pill > span:first-child { font-size: 14px; letter-spacing: 0; }
+.award-pill > span:first-child {
+	flex: 0 0 auto;
+	width: 44px;
+	height: 44px;
+	display: grid;
+	place-items: center;
+	border-radius: 50%;
+	border: 1px solid var(--pill-lime-border);
+	background: var(--pill-lime-bg);
+	box-shadow: 0 0 0 4px var(--bg);
+	font-size: 17px;
+	line-height: 1;
+	letter-spacing: 0;
+	color: var(--lime);
+}
 
 /* ---- Beat 3: two card shapes (see sections/Scene3Now.tsx) ----------------
    NB: no backticks anywhere in this string, comments included — see .pull-line.

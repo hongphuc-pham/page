@@ -1,7 +1,7 @@
 import { useAnimationFrame, useMotionValue, useMotionValueEvent } from 'motion/react'
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { FRAME_H, FRAME_W, frameRect, type FrameRange } from '../scene/storyFrames'
-import { beatPos } from '../scene/useScrollProgress'
+import { beatPos, SCENE_COUNT, scrollProgress } from '../scene/useScrollProgress'
 import { palettes } from '../theme'
 import { useThemeMode } from '../utils/useThemeMode'
 
@@ -168,21 +168,37 @@ export function FrameScrub({
 	// than once per scroll event.
 	useMotionValueEvent(frameIndex, 'change', (n) => draw(n))
 
-	// Preload, size to the box, and redraw on resize or theme change.
-	useEffect(() => {
-		let alive = true
+	/**
+	 * Fetch this beat's sheet, once.
+	 *
+	 * NOT called on mount. Every scene mounts at page load, so loading here
+	 * unconditionally pulled EVERY sheet during first paint — measured, and the
+	 * exact opposite of the per-beat lazy loading the sheets were split up for.
+	 *
+	 * The gate lives in the animation frame below — see the note there for why
+	 * it reads `scrollProgress` rather than `beatPos`. An IntersectionObserver
+	 * was tried first and is the wrong tool: the sections are pinned, so their
+	 * geometry does not correspond to reading position, and any rootMargin
+	 * generous enough to preload in time also matched beat 2 at scroll zero.
+	 */
+	const requested = useRef(false)
+	const fetchSheet = () => {
+		if (requested.current) return
+		requested.current = true
 		loadSheet(range.sheet.url)
 			.then((img) => {
-				if (!alive) return
 				sheetRef.current = img
 				draw(frameIndex.get())
 			})
 			.catch(() => {
 				/* sheet missing → canvas simply never draws. Layout is unaffected. */
 			})
+	}
 
+	// Size to the box; redraw on resize or theme change.
+	useEffect(() => {
 		const canvas = canvasRef.current
-		if (!canvas) return () => { alive = false }
+		if (!canvas) return
 
 		const resize = () => {
 			const dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -195,16 +211,36 @@ export function FrameScrub({
 		resize()
 		const ro = new ResizeObserver(resize)
 		ro.observe(canvas)
-		return () => {
-			alive = false
-			ro.disconnect()
-		}
+
+		// This effect re-runs on theme change; sheetRef survives it, so redraw
+		// immediately with the new tint rather than waiting for the next frame.
+		if (sheetRef.current) draw(frameIndex.get())
+
+		return () => ro.disconnect()
 		// draw closes over themeMode; re-running on theme change is the point.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [themeMode, range.sheet.url])
 
-	// The only moving part. Reads the shared clock; never writes it.
+	// The only moving part. Reads the shared clocks; never writes them.
 	useAnimationFrame((t) => {
+		// Preload gate — deliberately reads `scrollProgress`, not `beatPos`.
+		//
+		// `beatPos` is written by SIX ScrollTriggers, one per scene. Whenever
+		// ScrollTrigger (re)initialises — including the refresh() Story.tsx
+		// fires on window load, and every resize — it calls onUpdate once for
+		// each trigger, so beatPos transiently takes every value up to 5 before
+		// settling. Any gate reading it opens on that spike and pulls all
+		// sheets at once. Measured, twice: a time-based arming window did not
+		// help, because the load-time refresh lands after any sane window.
+		//
+		// `scrollProgress` has exactly one writer (the global tracker in
+		// Story.tsx), is recomputed from real scroll position on refresh, and
+		// is correct at rest. It is linear over total scroll while beats have
+		// unequal pin lengths, but this only has to be roughly one beat early.
+		if (!requested.current && (beat === 0 || scrollProgress.value > (beat - 0.6) / SCENE_COUNT)) {
+			fetchSheet()
+		}
+
 		if (!enabled) return
 		let n: number
 		if (mode === 'loop') {
