@@ -556,7 +556,9 @@ section[id] { scroll-margin-top: 24px; }
 	color: var(--text-secondary);
 	max-width: 46ch;
 }
-.award-pill > span:first-child {
+/* :first-of-type, not :first-child — Emotion logs an SSR-safety error for
+   :first-child on every load, and both select the same span here. */
+.award-pill > span:first-of-type {
 	flex: 0 0 auto;
 	width: 44px;
 	height: 44px;

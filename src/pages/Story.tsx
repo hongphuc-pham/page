@@ -20,8 +20,8 @@ import { Scene6Contact } from '../sections/Scene6Contact'
 import { useThemeMode } from '../utils/useThemeMode'
 
 // The stage used to hold a lazy three.js canvas (scene/CanvasRoot + LatticeField).
-// It now holds the film — see scene/StageFilm for why. The 3D files are still in
-// the tree but nothing imports them, so three.js no longer ships.
+// It now holds the film — see scene/StageFilm for why it was replaced. Those
+// files and the three.js dependencies are gone; the stage is 2D canvas now.
 
 gsap.registerPlugin(ScrollTrigger)
 
