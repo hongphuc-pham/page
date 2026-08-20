@@ -1,11 +1,13 @@
 import { Box } from '@mui/material'
-import { useReducedMotion } from 'framer-motion'
+import { useReducedMotion } from 'motion/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { lazy, Suspense, useLayoutEffect, useState } from 'react'
 import { AudioToggle } from '../components/AudioToggle'
 import { ChapterDots } from '../components/ChapterDots'
 import { ScrollProgressBar } from '../components/ScrollProgressBar'
+import { StageFrame } from '../components/StageFrame'
+import { VideoBackdrop } from '../components/VideoBackdrop'
 import { destroySmoothScroll, initSmoothScroll } from '../lib/lenis'
 import { beatPos, scrollProgress, SCENE_COUNT } from '../scene/useScrollProgress'
 import { Scene1Hook } from '../sections/Scene1Hook'
@@ -64,16 +66,18 @@ export function Story() {
 
 	return (
 		<>
-			<Suspense
-				fallback={
-					<Box
-						aria-hidden
-						sx={{ position: 'fixed', inset: 0, zIndex: 0, background: 'var(--painter-bg)' }}
-					/>
-				}
-			>
-				<CanvasRoot mode={mode} animate={!reduced} isMobile={isMobile} />
-			</Suspense>
+			<VideoBackdrop mode={mode} reduced={reduced} />
+
+			{/* The stage owns the canvas's box — see components/StageFrame and the
+			    --stage-* variables in theme.ts. It renders its frame with or without
+			    WebGL, so an empty frame is still a deliberate part of the layout.
+			    No Suspense fallback: the backdrop below is already a finished
+			    background, so there is nothing to hold the space for. */}
+			<StageFrame>
+				<Suspense fallback={null}>
+					<CanvasRoot mode={mode} animate={!reduced} isMobile={isMobile} />
+				</Suspense>
+			</StageFrame>
 
 			<ScrollProgressBar />
 			<ChapterDots />

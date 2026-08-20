@@ -4,35 +4,42 @@ import * as THREE from 'three'
 import { beatFraction, beatLerp } from './useScrollProgress'
 
 /**
- * Camera path — one keyframe per beat, sampled by global scroll progress
- * through a CatmullRomCurve3. Tweak these two arrays to re-block the film:
+ * Camera path — one keyframe per beat, sampled by beat position through a
+ * CatmullRomCurve3. Tweak these two arrays to re-block the film.
  *
- *   index 0 → HOOK        (0.00–0.20)  front-on, object centered
- *   index 1 → FOUNDATION  (0.20–0.40)  orbit right, look past the shard
- *   index 2 → NOW         (0.40–0.60)  orbit left + closer (fracture beat)
- *   index 3 → APPROACH    (0.60–0.80)  crane up, calm overview
- *   index 4 → CONTACT     (0.80–1.00)  pull back to a quiet wide shot
+ * ── Why the keyframes are gentle now ──────────────────────────────────────
+ * The camera used to aim at `x = -1.7` to shove the object into the right
+ * third of a full-bleed canvas. That never translated the object — it rotated
+ * the entire scene, so the field sat at a skewed off-axis angle that could not
+ * line up with any DOM edge. The canvas now has its own framed column
+ * (<StageFrame/>), so placement is CSS's job and the camera can simply look at
+ * the field, dead centre.
+ *
+ * The moves are also much smaller than before: this is a ~460px panel, not a
+ * full viewport, and a sweeping orbit inside a small frame reads as jitter.
  */
-// The shard sits at world origin. We look at a point to its LEFT so the object
-// renders in the RIGHT third of the screen, leaving the left clear for text.
-// One keyframe per beat: hook, foundation, now, approach, experience, contact.
+// Distance is set to frame the portrait field in scene/LatticeField.tsx
+// (±1.32 wide, ±1.78 tall) inside a narrow, tall panel.
 const CAM_KEYFRAMES: [number, number, number][] = [
-	[0, 0.1, 6.6],
-	[1.4, 0.9, 5.6],
-	[-1.6, 0.6, 5.0],
-	[0.6, 1.8, 6.0],
-	[-1.2, 1.0, 5.4],
-	[0, 0.0, 7.0],
+	[0, 0.0, 6.7],
+	[0.6, 0.4, 6.2],
+	[-0.55, 0.3, 5.9],
+	[0.4, -0.35, 6.1],
+	[-0.5, 0.2, 5.7],
+	[0, 0.0, 6.9],
 ]
 
-// Look-at biased left (negative x) → object drifts right of screen-center.
+// Centred. Small vertical drift only, so the field never leaves the frame.
+// Every keyframe must be DISTINCT: a centripetal Catmull-Rom divides by the
+// distance between consecutive points, so two identical keyframes produce NaN
+// and the camera ends up looking at nothing.
 const LOOK_KEYFRAMES: [number, number, number][] = [
-	[-1.7, 0.05, 0],
-	[-1.5, 0.15, 0],
-	[-1.9, 0.0, 0],
-	[-1.6, 0.25, 0],
-	[-1.7, 0.1, 0],
-	[-1.7, 0.0, 0],
+	[0, 0.0, 0],
+	[0, 0.1, 0],
+	[0, 0.02, 0],
+	[0, 0.08, 0],
+	[0, 0.01, 0],
+	[0, 0.05, 0],
 ]
 
 /** Lighting temperature per beat — warm open/close, cooler mid-story. */
@@ -59,8 +66,8 @@ export function CameraRig({ animate, warmColor, coolColor }: { animate: boolean;
 		const target = curve.getPoint(p)
 		// gentle pointer parallax on top of the spline position
 		if (animate) {
-			target.x += state.pointer.x * 0.25
-			target.y += state.pointer.y * 0.18
+			target.x += state.pointer.x * 0.12
+			target.y += state.pointer.y * 0.09
 		}
 		camera.position.lerp(target, 0.07)
 		lookAt.current.lerp(lookCurve.getPoint(p), 0.09)

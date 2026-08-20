@@ -1,6 +1,6 @@
-import MoreVertIcon from '@mui/icons-material/MoreVert'
+import { MoreVertIcon } from '../components/icons'
 import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material'
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useRef, useState } from 'react'
 import { experience } from '../data/cv'
 import { fonts, tokens } from '../theme'
@@ -9,10 +9,11 @@ import { Headline, Kicker, SceneShell } from './SceneShell'
 import { useSceneTimeline } from './useSceneTimeline'
 
 /**
- * Beat 5 — EXPERIENCE · scroll 0.667–0.833
- * Two main roles (CREST + ANZ) as expandable cards that open in place. The ⋮
- * menu reveals the `more` roles — internships, research fellowship,
- * certifications & community.
+ * Beat 5 — RECORD
+ * The beats above are the argument; this is the evidence to check it against —
+ * dated employers, in full. Two main roles (CREST + ANZ) as expandable cards
+ * that open in place. The ⋮ menu reveals the `more` roles — internships,
+ * research fellowship, certifications & community.
  */
 export function Scene5Experience({ reduced, isMobile }: { reduced: boolean; isMobile: boolean }) {
 	const root = useRef<HTMLElement>(null)

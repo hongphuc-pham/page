@@ -1,15 +1,13 @@
-import NorthEastIcon from '@mui/icons-material/NorthEast'
-import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore'
-import CloseIcon from '@mui/icons-material/Close'
+import { CloseIcon, NorthEastIcon, UnfoldMoreIcon } from '../../components/icons'
 import { Box, IconButton, Link, Stack, Typography } from '@mui/material'
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useState } from 'react'
 import type { Project, Role } from '../../data/cv'
 import { fonts, tokens } from '../../theme'
 
 /**
  * A CV role card that expands in place to reveal the full content (bullets +
- * project quick-shots). Height animates smoothly via framer-motion `layout`;
+ * project quick-shots). Height animates smoothly via Motion `layout`;
  * honors prefers-reduced-motion (instant, no layout animation).
  */
 export function ExpandableRoleCard({ role }: { role: Role }) {
@@ -64,7 +62,7 @@ export function ExpandableRoleCard({ role }: { role: Role }) {
 							aria-label={expanded ? 'Collapse role' : 'Expand role'}
 							sx={{ color: expanded ? tokens.primary : tokens.text.muted }}
 						>
-							{expanded ? <CloseIcon sx={{ fontSize: 18 }} /> : <UnfoldMoreIcon sx={{ fontSize: 18 }} />}
+							{expanded ? <CloseIcon size={18} /> : <UnfoldMoreIcon size={18} />}
 						</IconButton>
 					</Stack>
 				</Stack>
@@ -151,8 +149,14 @@ function MiniProject({ project }: { project: Project }) {
 				overflow: 'hidden',
 				bgcolor: tokens.card,
 				height: '100%',
-				transition: 'border-color 180ms ease, transform 180ms ease',
-				...(href && { '&:hover': { borderColor: `${project.accent}88`, transform: 'translateY(-2px)' } }),
+				transition: 'border-color 180ms ease, transform 180ms var(--ease-out)',
+				// Lift on hover only for real pointers — on touch this sticks after
+				// a tap and leaves the card floating for no reason.
+				...(href && {
+					'@media (hover: hover) and (pointer: fine)': {
+						'&:hover': { borderColor: `${project.accent}88`, transform: 'translateY(-2px)' },
+					},
+				}),
 			}}
 		>
 			<Box sx={{ position: 'relative', height: 84, background: project.gradient, overflow: 'hidden' }}>
@@ -175,7 +179,7 @@ function MiniProject({ project }: { project: Project }) {
 			<Box sx={{ px: 1.25, py: 1 }}>
 				<Stack direction="row" alignItems="center" spacing={0.5}>
 					<Typography sx={{ fontWeight: 650, fontSize: 13 }}>{project.name}</Typography>
-					{href && <NorthEastIcon sx={{ fontSize: 12, color: project.accent }} />}
+					{href && <NorthEastIcon size={12} color={project.accent} />}
 				</Stack>
 				<Typography
 					sx={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: '0.06em', color: tokens.text.muted, mt: 0.25 }}

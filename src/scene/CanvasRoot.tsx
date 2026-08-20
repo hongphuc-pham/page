@@ -1,15 +1,18 @@
+import { PerformanceMonitor } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import { Component, type ReactNode } from 'react'
+import { Component, useState, type ReactNode } from 'react'
 import { palettes, type ThemeMode } from '../theme'
 import { CameraRig } from './CameraRig'
 import { Effects } from './Effects'
-import { HeroObject } from './HeroObject'
-import { Orbits } from './Orbits'
+import { LatticeField } from './LatticeField'
 
 /**
- * The one persistent full-viewport canvas. Fixed behind the DOM overlay,
- * never unmounts between scenes. Lazy-loaded from Story.tsx so three.js
- * lives in its own chunk.
+ * The one persistent canvas. Never unmounts between scenes; lazy-loaded from
+ * Story.tsx so three.js lives in its own chunk.
+ *
+ * It no longer positions itself. The canvas fills whatever box its parent
+ * gives it — <StageFrame/> — which is what put it on the page grid instead of
+ * floating full-bleed behind everything.
  */
 
 class SceneErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
@@ -33,26 +36,44 @@ export default function CanvasRoot({
 	isMobile: boolean
 }) {
 	const palette = palettes[mode]
+
+	// Quality ladder. A fixed dpr of 2 looks best but silently costs 4× the
+	// fragments of dpr 1, which is the difference between a smooth story and a
+	// stuttering one on integrated graphics. PerformanceMonitor watches the real
+	// frame rate and steps down — first resolution, then the postprocessing
+	// stack — rather than letting the whole scene judder at full quality.
+	const fullDpr = isMobile ? 1.5 : 2
+	const [dpr, setDpr] = useState(fullDpr)
+	const [degraded, setDegraded] = useState(false)
+
 	return (
 		<SceneErrorBoundary>
 			<Canvas
-				dpr={isMobile ? [1, 1.5] : [1, 2]}
+				dpr={dpr}
 				frameloop={animate ? 'always' : 'demand'}
 				camera={{ position: [0, 0.2, 6.5], fov: 42 }}
 				gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
 				style={{
-					position: 'fixed',
+					position: 'absolute',
 					inset: 0,
-					zIndex: 0,
 					pointerEvents: 'none',
-					background: 'var(--painter-bg)',
-					transition: 'background 300ms ease',
+					// The background is owned by <VideoBackdrop/> and the stage frame.
+					background: 'transparent',
 				}}
 			>
+				<PerformanceMonitor
+					// Two strikes before touching quality — a single slow second
+					// during page load shouldn't permanently downgrade the scene.
+					flipflops={2}
+					onDecline={() => setDpr(1)}
+					onFallback={() => {
+						setDpr(1)
+						setDegraded(true)
+					}}
+				/>
 				<CameraRig animate={animate} warmColor={palette.accent} coolColor={palette.primary} />
-				<HeroObject mode={mode} animate={animate} detail={isMobile ? 0 : 1} />
-				<Orbits mode={mode} isMobile={isMobile} />
-				{!isMobile && animate && <Effects />}
+				<LatticeField mode={mode} animate={animate} isMobile={isMobile} />
+				{!isMobile && animate && !degraded && <Effects />}
 			</Canvas>
 		</SceneErrorBoundary>
 	)

@@ -1,5 +1,5 @@
 import { Box, type SxProps, type Theme } from '@mui/material'
-import { useReducedMotion } from 'framer-motion'
+import { useReducedMotion } from 'motion/react'
 import { useCallback, useRef, type ReactNode } from 'react'
 import { tokens } from '../../theme'
 

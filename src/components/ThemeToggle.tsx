@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { Box, Tooltip } from '@mui/material'
-import LightModeIcon from '@mui/icons-material/LightModeOutlined'
-import DarkModeIcon from '@mui/icons-material/DarkModeOutlined'
+import { DarkModeIcon, LightModeIcon } from './icons'
 import { fonts, tokens, type ThemeMode } from '../theme'
 
 const STORAGE_KEY = 'phuc.theme'
@@ -89,7 +88,7 @@ export function ThemeToggle() {
 						},
 					}}
 				>
-					<Icon sx={{ fontSize: 18 }} />
+					<Icon size={18} />
 					<Box
 						component="span"
 						sx={{

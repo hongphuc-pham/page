@@ -169,6 +169,459 @@ function paletteToVars(p: Palette) {
 	}
 }
 
+/** One `selector { --var: value; … }` block of CSS text. */
+function varsBlock(selector: string, p: Palette): string {
+	const body = Object.entries(paletteToVars(p))
+		.map(([k, v]) => `\t${k}: ${v};`)
+		.join('\n')
+	return `${selector} {\n${body}\n}`
+}
+
+/**
+ * Global CSS, as a STRING rather than a style object.
+ *
+ * MUI accepts either for `MuiCssBaseline.styleOverrides`, but the object form
+ * is checked against `CSSObject`, a large recursive type. A template string
+ * costs the type checker nothing, and none of this needs a theme callback —
+ * every value is a literal or a CSS variable.
+ *
+ * Measured, so nobody re-litigates it: switching this block from object to
+ * string did NOT clear the project's TS2590 (see sections/SceneShell.tsx).
+ * That error comes from MUI v5's `Box` type — a bare `<Box>` with no props is
+ * enough to trigger it — and only an MUI v6+ upgrade or dropping `Box` will
+ * actually fix it. The string form is kept because it is cheaper and reads as
+ * plain CSS, not because it solved that.
+ *
+ * NOTE: this is the ONLY global stylesheet that is actually loaded.
+ * `src/index.css` exists but is imported nowhere; fonts come from a <link> in
+ * index.html. Put new global CSS here.
+ */
+const GLOBAL_CSS = `
+${varsBlock(':root', palettes.dark)}
+${varsBlock('[data-theme="dark"]', palettes.dark)}
+${varsBlock('[data-theme="light"]', palettes.light)}
+
+/* Custom easing curves. The built-in CSS easings are too weak to read as
+   intentional. Never ease-in for UI — it delays the first frames, exactly
+   when the user is watching. */
+html {
+	--ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+	--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+	/* ---- The one page grid ----------------------------------------------
+	   Content column and 3D stage are derived from the SAME four numbers, so
+	   the fixed-position canvas lands exactly where a grid track would put it.
+	   This is the fix for the old layout: the canvas used to be "inset: 0"
+	   full-bleed with a gradient scrim pretending to be a column.
+	   --rail centres the pair once the viewport is wider than they need. */
+	--content-w: clamp(420px, 44vw, 660px);
+	--stage-w: clamp(320px, 32vw, 460px);
+	--stage-gap: clamp(32px, 4vw, 64px);
+	--rail: max(40px, calc((100vw - (var(--content-w) + var(--stage-gap) + var(--stage-w))) / 2));
+	--stage-y: clamp(56px, 8vh, 96px);
+}
+
+/* Stacking context so VideoBackdrop's z-index:-1 paints above the body
+   background rather than disappearing behind it. */
+#root { isolation: isolate; }
+
+/* note: no CSS scroll-behavior — Lenis owns smooth scrolling */
+body {
+	background-color: var(--body-bg);
+	color: var(--text-primary);
+	font-family: ${fonts.body};
+	font-feature-settings: "cv11", "ss01", "ss03", "cv02";
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+	transition: background-color 240ms ease, color 240ms ease;
+}
+
+section[id] { scroll-margin-top: 24px; }
+*::selection { background: var(--selection-bg); }
+
+/* ---- Scene layout & HUD chrome (see sections/SceneShell.tsx) ----
+   Plain classes rather than MUI <Box sx>: Box carries the entire
+   system-props type on top of SxProps, and enough of them in one file tips
+   tsc into TS2590. Static layout and decoration need no theme callback.
+   Spacing mirrors MUI's 8px unit; breakpoints md=900, lg=1200. */
+.scene-section {
+	min-height: 100vh;
+	position: relative;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	padding: 64px 24px;
+}
+@media (min-width: 900px) { .scene-section { padding: 80px; } }
+
+/* Two-column layout. Below this width there is not enough room for a content
+   column AND a stage, so the canvas stays a full-bleed ambient backdrop and
+   the text takes the whole page — see .story-stage. */
+@media (min-width: 1100px) {
+	.scene-section {
+		padding-block: var(--stage-y);
+		padding-inline: var(--rail) calc(var(--rail) + var(--stage-w) + var(--stage-gap));
+	}
+}
+
+/* Contrast scrim. Only earns its place while the canvas is full-bleed behind
+   the text; once the stage has its own column there is nothing to scrim. */
+.scene-scrim {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background: var(--scrim-v);
+}
+@media (min-width: 1100px) { .scene-scrim { background: none; } }
+
+/* ---- Comic frame layer (see components/FrameScrub.tsx) --------------------
+   The scroll-scrubbed art for a beat, living INSIDE the HUD panel so the panel
+   frames it the way a comic gutter frames a panel.
+
+   z-index: -1 is load-bearing and subtle. .scene-inner has backdrop-filter,
+   which makes it a stacking context — so a negative z-index child is trapped
+   inside it and paints in the one slot we want: above the panel's own
+   background, below the copy. Without it the canvas is absolutely positioned
+   and would paint OVER the static text; clamped to the content column outside
+   the panel instead, it would be hidden by the panel's background entirely.
+   Both were tried. This is the slot that works. */
+.scene-frames {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: inherit;
+	overflow: hidden;
+	pointer-events: none;
+}
+
+/* ---- Degree cards (see sections/Scene2Foundation.tsx) --------------------
+   Was <Stack><Box sx={…}>; moved here because that pair tips tsc over TS2590.
+   Values are the MUI ones it replaced, resolved: p 2.5 = 20px, spacing 2 =
+   16px, borderRadius 2.5 = 2.5 x shape.borderRadius(14) = 35px. sm = 600. */
+.edu-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+@media (min-width: 600px) { .edu-grid { flex-direction: row; } }
+
+/* ---- Beat 4 pull quote (see sections/Scene4Approach.tsx) -----------------
+   The sentence the whole METHOD beat exists to earn, lifted out of the body
+   paragraph. Display serif at body-adjacent size so it reads as the headline's
+   second half rather than a third heading; the primary rail deliberately
+   borrows the .ba language from beat 2, because it makes the same kind of
+   claim. Class rather than sx — see the TS2590 note above .edu-grid.
+   NB: this whole block is inside a JS template literal — never type a
+   backtick in these comments, it ends the string and the page dies. */
+.pull-line {
+	margin: 16px 0;
+	padding-left: 16px;
+	max-width: 520px;
+	font-family: ${fonts.display};
+	font-size: 19px;
+	line-height: 1.4;
+	color: var(--text-primary);
+	border-left: 2px solid var(--primary);
+}
+@media (min-width: 600px) { .pull-line { font-size: 22px; } }
+
+/* ---- Beat 4 rule panels (see sections/Scene4Approach.tsx) ----------------
+   Five practices, five panels. minmax(160px) lands 3 + 2 inside the 640px
+   content panel, which is a deliberate comic rhythm and leaves each panel room
+   for two words per line. 112px gave 4 + 1, which reads as a leftover; five
+   across cramps every label to one word per line.
+   auto-fit, not a fixed column count, so the row still collapses gracefully
+   in the single-column layout below 1100px.
+   NB: no backticks in this string, comments included — see .pull-line. */
+.rule-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+	gap: 8px;
+	margin: 20px 0 4px;
+}
+
+.rule-panel {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	padding: 11px 12px 12px;
+	border: 1px solid var(--line);
+	border-radius: 4px;
+	background: var(--primary-tint);
+}
+.rule-panel > b {
+	font-family: ${fonts.mono};
+	font-weight: 500;
+	font-size: 12px;
+	letter-spacing: 0.04em;
+	color: var(--primary);
+}
+.rule-panel > span {
+	font-size: 12px;
+	line-height: 1.45;
+	color: var(--text-muted);
+}
+
+.edu-card {
+	flex: 1;
+	padding: 20px;
+	border: 1px solid var(--line);
+	border-radius: 35px;
+	background: var(--surface);
+	backdrop-filter: blur(10px);
+}
+
+/* ---- The 3D stage ---------------------------------------------------------
+   Below 1100px: an unframed, dimmed full-bleed backdrop.
+   At 1100px and up: a real framed panel occupying the grid's second column,
+   with the same border, radius, blur and shadow language as .scene-inner —
+   so the two halves of the page read as one instrument, not a card floating
+   next to a stray planet. */
+.story-stage {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	opacity: 0.4;
+	transition: opacity 300ms ease;
+}
+@media (min-width: 1100px) {
+	.story-stage {
+		inset: var(--stage-y) var(--rail) var(--stage-y) auto;
+		width: var(--stage-w);
+		opacity: 1;
+		border: 1px solid var(--primary-border);
+		border-radius: 12px;
+		overflow: hidden;
+		background: var(--sidebar-bg);
+		backdrop-filter: blur(10px);
+		box-shadow: 0 24px 70px -34px rgba(0, 0, 0, 0.75), inset 0 0 0 1px var(--line-soft);
+	}
+}
+
+/* Soft light pooled behind the field so the plates never float on flat black. */
+.story-stage-glow {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background: radial-gradient(70% 55% at 50% 45%, var(--spotlight) 0%, transparent 70%);
+}
+
+/* HUD readout pinned to the stage's foot — the counterpart to .hud-header on
+   the content panel. Hidden until the stage is a real framed column. */
+.story-stage-readout {
+	position: absolute;
+	left: 14px;
+	right: 14px;
+	bottom: 12px;
+	display: none;
+	justify-content: space-between;
+	gap: 12px;
+	font-family: ${fonts.mono};
+	font-size: 10px;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: var(--text-muted);
+	pointer-events: none;
+}
+@media (min-width: 1100px) { .story-stage-readout { display: flex; } }
+
+/* Progress of the current formation, drawn as a hairline under the readout. */
+.story-stage-bar {
+	position: absolute;
+	left: 14px;
+	right: 14px;
+	bottom: 30px;
+	height: 1px;
+	background: var(--line);
+	pointer-events: none;
+	display: none;
+}
+@media (min-width: 1100px) { .story-stage-bar { display: block; } }
+
+.story-stage-bar > i {
+	display: block;
+	height: 100%;
+	width: 0%;
+	background: var(--primary);
+	transform-origin: left center;
+}
+
+.scene-inner {
+	position: relative;
+	width: 100%;
+	padding: 18px 20px 22px;
+	border-radius: 10px;
+	border: 1px solid var(--primary-border);
+	background: var(--sidebar-bg);
+	backdrop-filter: blur(10px);
+	box-shadow: 0 24px 70px -34px rgba(0, 0, 0, 0.75), inset 0 0 0 1px var(--line-soft);
+}
+@media (min-width: 900px) { .scene-inner { padding: 22px 28px 26px; } }
+
+/* ---- Before → After → Result (see sections/Scene2Foundation.tsx) ----
+   The site's whole argument, in three rows. The rail down the left is what
+   makes it read as one movement rather than three unrelated bullets: it runs
+   muted → primary → accent, the same journey the 3D field makes. */
+.ba {
+	position: relative;
+	margin: 4px 0 26px;
+	padding-left: 22px;
+}
+.ba::before {
+	content: '';
+	position: absolute;
+	left: 3px;
+	top: 10px;
+	bottom: 10px;
+	width: 1px;
+	opacity: 0.6;
+	background: linear-gradient(180deg, var(--text-muted), var(--primary) 55%, var(--accent));
+}
+.ba-row { position: relative; padding: 9px 0; }
+.ba-row::before {
+	content: '';
+	position: absolute;
+	left: -22px;
+	top: 15px;
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--bg);
+	border: 1px solid currentColor;
+}
+.ba-row--before { color: var(--text-muted); }
+.ba-row--after { color: var(--primary); }
+.ba-row--result { color: var(--accent); }
+
+.ba-label {
+	font-family: ${fonts.mono};
+	font-size: 10px;
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	margin-bottom: 5px;
+}
+.ba-text {
+	color: var(--text-secondary);
+	font-size: 16px;
+	line-height: 1.65;
+	max-width: 56ch;
+}
+@media (min-width: 900px) { .ba-text { font-size: 17px; } }
+.ba-row--result .ba-text { color: var(--text-primary); }
+
+/* Award pill (sections/Scene2Foundation.tsx). A class, not <Box sx>, because a
+   bare MUI <Box> on its own is enough to trip TS2590 in this project. */
+.award-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 14px;
+	margin-bottom: 32px;
+	border-radius: 999px;
+	border: 1px solid var(--pill-lime-border);
+	background: var(--pill-lime-bg);
+	font-family: ${fonts.mono};
+	font-size: 12px;
+	letter-spacing: 0.08em;
+	color: var(--text-primary);
+}
+.award-pill > span:first-child { font-size: 14px; letter-spacing: 0; }
+
+/* ---- Beat 3: two card shapes (see sections/Scene3Now.tsx) ----------------
+   NB: no backticks anywhere in this string, comments included — see .pull-line.
+   The honesty rule in data/cv.ts forbids inventing a before-line, so
+   ElevexAI and AIDFest have none. Rather than leave a hole where the other
+   three cards have content, the two kinds of card get visibly different
+   shapes — the asymmetry then reads as a decision rather than an omission.
+
+   A card WITH a grounded before-line gets a comic caption box and an AFTER
+   marker on the detail beneath it, so the card performs the same
+   before/after move the whole site argues. A card WITHOUT one gets neither,
+   and its detail line simply starts at the top. No new words either way:
+   every string on screen is still straight out of cv.ts. */
+.card-before {
+	position: relative;
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	margin-bottom: 10px;
+	padding: 7px 10px 8px;
+	border: 1px solid var(--line);
+	border-left: 2px solid var(--text-muted);
+	border-radius: 3px;
+	background: var(--primary-tint);
+	font-family: ${fonts.mono};
+	font-size: 11px;
+	line-height: 1.5;
+	letter-spacing: 0.02em;
+	color: var(--text-secondary);
+}
+.card-before > b {
+	font-weight: 400;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	font-size: 9.5px;
+	flex-shrink: 0;
+	opacity: 0.9;
+}
+
+/* The AFTER label that makes the pair legible as a pair. */
+.card-after {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+}
+.card-detail {
+	color: var(--text-secondary);
+	line-height: 1.55;
+}
+.card-after > b {
+	font-family: ${fonts.mono};
+	font-weight: 400;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	font-size: 9.5px;
+	flex-shrink: 0;
+	color: var(--primary);
+	opacity: 0.9;
+}
+
+.hud-header {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 16px;
+}
+@media (min-width: 900px) { .hud-header { margin-bottom: 20px; } }
+
+.hud-dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	flex-shrink: 0;
+	background: var(--primary);
+	box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.hud-rule {
+	flex: 1;
+	height: 1px;
+	background: linear-gradient(90deg, var(--primary-border), transparent);
+}
+
+.hud-scanline {
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, 0.014) 3px 4px);
+}
+`
+
 export const theme = createTheme({
 	palette: {
 		mode: 'dark',
@@ -195,24 +648,7 @@ export const theme = createTheme({
 	},
 	components: {
 		MuiCssBaseline: {
-			styleOverrides: {
-				':root': paletteToVars(palettes.dark),
-				'[data-theme="dark"]': paletteToVars(palettes.dark),
-				'[data-theme="light"]': paletteToVars(palettes.light),
-				// note: no CSS scroll-behavior — Lenis owns smooth scrolling
-				body: {
-					backgroundColor: 'var(--body-bg)',
-					color: 'var(--text-primary)',
-					fontFamily: fonts.body,
-					fontFeatureSettings: '"cv11", "ss01", "ss03", "cv02"',
-					WebkitFontSmoothing: 'antialiased',
-					MozOsxFontSmoothing: 'grayscale',
-					textRendering: 'optimizeLegibility',
-					transition: 'background-color 240ms ease, color 240ms ease',
-				},
-				'section[id]': { scrollMarginTop: '24px' },
-				'*::selection': { background: 'var(--selection-bg)' },
-			},
+			styleOverrides: GLOBAL_CSS,
 		},
 		MuiPaper: {
 			defaultProps: { elevation: 0 },
@@ -252,16 +688,27 @@ export const theme = createTheme({
 					fontWeight: 600,
 					paddingInline: 18,
 					paddingBlock: 10,
+					// Press feedback. Without it a button gives no sign it heard the
+					// click until the page reacts; the dip is what makes the UI feel
+					// like it is listening. Subtle on purpose — 0.97, not 0.9.
+					transition: 'transform 160ms var(--ease-out), background-color 200ms ease, border-color 200ms ease',
+					'&:active': { transform: 'scale(0.97)' },
 				},
 				containedPrimary: {
 					backgroundColor: 'var(--primary)',
 					color: '#06121A',
-					'&:hover': { backgroundColor: 'var(--button-contained-hover)' },
+					// Touch devices fire :hover on tap and leave it stuck until you
+					// tap elsewhere. Gate hover to real pointers.
+					'@media (hover: hover) and (pointer: fine)': {
+						'&:hover': { backgroundColor: 'var(--button-contained-hover)' },
+					},
 				},
 				outlinedPrimary: {
 					borderColor: 'var(--line)',
 					color: 'var(--text-primary)',
-					'&:hover': { borderColor: 'var(--primary)', backgroundColor: 'var(--button-outlined-hover-bg)' },
+					'@media (hover: hover) and (pointer: fine)': {
+						'&:hover': { borderColor: 'var(--primary)', backgroundColor: 'var(--button-outlined-hover-bg)' },
+					},
 				},
 			},
 		},

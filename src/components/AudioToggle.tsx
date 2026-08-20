@@ -1,5 +1,4 @@
-import VolumeOffIcon from '@mui/icons-material/VolumeOffOutlined'
-import VolumeUpIcon from '@mui/icons-material/VolumeUpOutlined'
+import { VolumeOffIcon, VolumeUpIcon } from './icons'
 import { Tooltip } from '@mui/material'
 import { useState } from 'react'
 import { tokens } from '../theme'
@@ -42,7 +41,7 @@ export function AudioToggle() {
 					transition: 'color 160ms ease, border-color 160ms ease',
 				}}
 			>
-				<Icon sx={{ fontSize: 18 }} />
+				<Icon size={18} />
 			</button>
 		</Tooltip>
 	)

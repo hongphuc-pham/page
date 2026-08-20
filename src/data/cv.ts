@@ -1,6 +1,17 @@
 /**
  * Single source of truth for all CV copy shown in the cinematic scenes.
  *
+ * ── The story this site tells ─────────────────────────────────────────────
+ * "I delete the manual step." Every role here is the same shape of work: a
+ * process people were doing by hand became software they actually use. That
+ * through-line is not a marketing angle bolted on afterwards — it is what the
+ * facts below already say, in every job, since 2019.
+ *
+ *   Excel DR workflow, 15–20h        → Spring Boot platform            (ANZ)
+ *   hand-labelled 2D floor plans     → PyTorch CV model                (Eclipse CS)
+ *   NDIS documentation read by hand  → Luna, a RAG chatbot             (CREST)
+ *   researchers provisioning infra   → DEP & VIP, a managed PaaS       (CREST)
+ *
  * Sources: src/data/*.json (previous site copy) + docs/Pham_HongPhuc_Career_Facts.md
  * (the declared master reference). Where the two disagreed, the career-facts
  * guardrails win. Corrections made while migrating (each was a do-not-claim item):
@@ -11,6 +22,12 @@
  *   - "API design reviews"           → peer code review + regression checks
  *   - CREST "Dec 2023 – Present"     → Dec 2023 – Jun 2026 (role has ended)
  *   - email                          → william.phucpham@gmail.com (user-confirmed)
+ *
+ * ── Rule for the `before:` lines ──────────────────────────────────────────
+ * A `before` must be derivable from copy already in this file. Projects with no
+ * grounded manual-step story (ElevexAI, AIDFest — both are product surfaces, not
+ * automations) carry NO `before` line rather than an invented one. Symmetry is
+ * not worth a claim you cannot back in an interview.
  */
 
 export const contact = {
@@ -25,26 +42,39 @@ export const contact = {
 	github: 'https://github.com/hongphuc-pham',
 }
 
-/** Beat 1 — HOOK (scroll 0–16.7%) */
+/** Beat 1 — INTRO */
 export const hook = {
 	kicker: '// phuc · william · pham',
-	headline: 'Software that thinks with you.',
+	headline: 'I delete the manual step.',
 	positioning:
-		'Full-stack engineer building AI-enabled products across web, mobile and backend systems.',
+		'Full-stack engineer. I take the work people are still doing by hand — in spreadsheets, ' +
+		'in documents, in their heads — and turn it into software they actually use.',
 	meta: `${contact.role} · ${contact.location}`,
 }
 
-/** Beat 2 — FOUNDATION (scroll 16.7–33.3%) */
+/**
+ * Beat 2 — PROOF. The origin story, told as the before/after it actually was.
+ * Scene2Foundation renders `before` → `after` → `result` as three stacked rows.
+ */
 export const foundation = {
-	kicker: '// 02 · foundation',
-	headline: 'The craft came before the hype.',
-	body:
-		'Application Developer at ANZ New Zealand (2019–2020): a Java + Spring Boot platform ' +
-		'that digitised a manual, Excel-based disaster-recovery workflow in a regulated ' +
-		'banking environment.',
-	proof:
-		'The previous year, the DR exercise took 15–20 hours. The year the app was used, ' +
-		'the team coordinated through it and finished hours earlier.',
+	kicker: '// 02 · proof',
+	headline: 'It started with a spreadsheet.',
+	before: {
+		label: 'Before',
+		text:
+			'ANZ New Zealand ran its disaster-recovery exercise out of Excel — a manual workflow, ' +
+			'coordinated by hand, inside a regulated bank. The previous year it took 15–20 hours.',
+	},
+	after: {
+		label: 'After',
+		text:
+			'A Java + Spring Boot web application on MS SQL Server, deployed to Red Hat OpenShift. ' +
+			'I designed the schema and migrated the data off a legacy MS Access database.',
+	},
+	result: {
+		label: 'Result',
+		text: 'The year the team coordinated through the app, the exercise finished hours earlier.',
+	},
 	award: 'Kau Mau Te Wehi Award — contribution to DR exercise efficiency',
 	education: [
 		{
@@ -65,6 +95,8 @@ export type ProjectLink = { label: string; url: string }
 export type Project = {
 	name: string
 	tagline: string
+	/** the manual process this replaced — omitted where there isn't a grounded one */
+	before?: string
 	detail: string
 	tech: string[]
 	/** live screenshot thumbnail; null → gradient + initials placeholder */
@@ -76,23 +108,24 @@ export type Project = {
 	status: string
 }
 
-/** Beat 3 — RECENT WORK (scroll 33.3–50%) */
+/** Beat 3 — PATTERN. Same shape of problem, four more times — and these ones shipped. */
 export const recentWork = {
-	kicker: '// 03 · recent work',
-	headline: 'Built to ship.',
+	kicker: '// 03 · pattern',
+	headline: 'Then it kept happening.',
 	body:
-		'Software Engineer at CREST, University of Adelaide (Dec 2023 – Jun 2026). ' +
-		'Built features across the stack within 4–5 web and mobile platforms — ' +
-		'React / Next.js / React Native front ends, Node.js and FastAPI services, ' +
+		'Software Engineer at CREST, University of Adelaide (Dec 2023 – Jun 2026). Different ' +
+		'domains, same shape of problem. Features across the stack within 4–5 web and mobile ' +
+		'platforms — React / Next.js / React Native front ends, Node.js and FastAPI services, ' +
 		'PostgreSQL, MongoDB, Milvus and Neo4j underneath.',
 	aiNote:
 		'LLM integration and agentic features, RAG pipelines, small-model training ' +
 		'and quantisation — local LLM infrastructure for research work.',
-	showcaseHeading: 'Live & in use today.',
+	showcaseHeading: 'Not demos. Downloads.',
 	projects: [
 		{
 			name: 'SoftSec Intel',
 			tagline: 'RAG security companion',
+			before: 'Software-security guidance spread across advisories, papers and docs.',
 			detail:
 				'RAG-powered software-security companion — vector + graph + relational stores, on iOS and Android.',
 			tech: ['LLM RAG', 'Prefect', 'Vector + Graph DB', 'iOS', 'Android'],
@@ -108,6 +141,21 @@ export const recentWork = {
 			status: 'Live · iOS + Android',
 		},
 		{
+			name: 'DEP & VIP',
+			tagline: 'Data-science PaaS',
+			before: 'Researchers provisioning their own infrastructure before they could start.',
+			detail: 'Internal data-science PaaS at CREST — managed research environments, no infra to provision.',
+			tech: ['Platform-as-a-Service', 'Data Science', 'CREST · UofA'],
+			image:
+				'https://s.wordpress.com/mshots/v1/https%3A%2F%2Fwww.elevexai.systems%2Fproducts?w=1280&h=720',
+			links: [{ label: 'Featured on elevexai.systems', url: 'https://www.elevexai.systems/products' }],
+			accent: '#B482FF',
+			gradient: 'linear-gradient(135deg, rgba(180,130,255,0.45) 0%, rgba(124,231,255,0.22) 100%)',
+			initials: 'DV',
+			status: 'Internal · CREST',
+		},
+		{
+			// No manual-step story here — it's a product surface. No `before` line.
 			name: 'ElevexAI',
 			tagline: 'Product surface',
 			detail: 'Marketing & product surface for ElevexAI — Next.js, Sanity, Vercel.',
@@ -133,22 +181,10 @@ export const recentWork = {
 			status: 'Live · Web',
 		},
 		{
-			name: 'DEP & VIP',
-			tagline: 'Data-science PaaS',
-			detail: 'Internal data-science PaaS at CREST — managed research environments, no infra to provision.',
-			tech: ['Platform-as-a-Service', 'Data Science', 'CREST · UofA'],
-			image:
-				'https://s.wordpress.com/mshots/v1/https%3A%2F%2Fwww.elevexai.systems%2Fproducts?w=1280&h=720',
-			links: [{ label: 'Featured on elevexai.systems', url: 'https://www.elevexai.systems/products' }],
-			accent: '#B482FF',
-			gradient: 'linear-gradient(135deg, rgba(180,130,255,0.45) 0%, rgba(124,231,255,0.22) 100%)',
-			initials: 'DV',
-			status: 'Internal · CREST',
-		},
-		{
 			// Luna + CareHub are one product; kept last per request.
 			name: 'CareHub · Luna',
 			tagline: 'Healthcare app · RAG',
+			before: 'NDIS documentation, read by hand.',
 			detail:
 				'React Native healthcare app with Luna — a retrieval-augmented chatbot over NDIS documentation.',
 			tech: ['React Native', 'LLM RAG', 'Python', 'iOS'],
@@ -162,14 +198,34 @@ export const recentWork = {
 	] as Project[],
 }
 
-/** Beat 4 — HOW I WORK (scroll 50–66.7%) */
+/** Beat 4 — METHOD. The part that makes the pattern repeatable instead of lucky. */
 export const approach = {
-	kicker: '// 04 · how i work',
-	headline: 'AI-assisted. Structured. Honest.',
-	body:
-		'pytest on backend logic, Playwright over main user flows, Swagger-documented APIs, ' +
-		'peer code review, Docker-first deployment. No fabricated metrics. Grounded ' +
-		'documentation. Shipped software.',
+	kicker: '// 04 · method',
+	headline: 'How I keep it honest.',
+	/**
+	 * The reason this beat exists at all. Same sentence that used to open
+	 * `body` — moved out so it lands as a line rather than as a clause the eye
+	 * slides past on its way to the list.
+	 */
+	pull: 'Removing someone’s manual step means they now trust your software instead.',
+	/**
+	 * The five practices that used to be a comma-list inside `body`, split so
+	 * each can hold a panel of its own.
+	 *
+	 * The split is stored rather than computed: taking the first word at render
+	 * time produced "Swagger-documented / APIs" and a heading that read just
+	 * "peer". Every fragment here is still a verbatim slice of the original
+	 * sentence — `scope` is empty where the phrase has no tail worth splitting.
+	 * Presentational only, not editorial. Do not add a sixth without a source.
+	 */
+	practices: [
+		{ tool: 'pytest', scope: 'on backend logic' },
+		{ tool: 'Playwright', scope: 'over main user flows' },
+		{ tool: 'Swagger', scope: 'documented APIs' },
+		{ tool: 'Peer code review', scope: '' },
+		{ tool: 'Docker', scope: 'first deployment' },
+	],
+	body: 'No fabricated metrics. Grounded documentation. Shipped software.',
 	// CV-style skill matrix — grouped by category.
 	stackGroups: [
 		{ label: 'Languages', items: ['TypeScript', 'JavaScript', 'Python', 'SQL', 'Java', 'Bash'] },
@@ -197,8 +253,9 @@ const anzProjects: Project[] = [
 	{
 		name: 'DR Management Platform',
 		tagline: 'Java · Spring Boot',
+		before: 'A manual, Excel-based disaster-recovery workflow.',
 		detail:
-			'Digitised a manual, Excel-based disaster-recovery workflow. Spring Boot + MS SQL Server, deployed on Red Hat OpenShift.',
+			'Digitised the workflow end to end. Spring Boot + MS SQL Server, deployed on Red Hat OpenShift.',
 		tech: ['Java', 'Spring Boot', 'MS SQL Server', 'OpenShift'],
 		image: null,
 		links: [],
@@ -213,6 +270,7 @@ const eclipseProjects: Project[] = [
 	{
 		name: '2D Floor-plan Analysis',
 		tagline: 'CV · PyTorch',
+		before: 'Floor plans labelled by hand, one at a time.',
 		detail:
 			'Computer-vision solution automating 2D floor-plan analysis; designed, tested and refined models with domain experts.',
 		tech: ['PyTorch', 'Computer Vision', 'Python'],
@@ -241,18 +299,21 @@ const rayoProjects: Project[] = [
 	},
 ]
 
-/** Beat 5 — EXPERIENCE (scroll 66.7–83.3%). Main roles expand to full detail;
- *  the ⋮ menu reveals the `more` roles. */
+/**
+ * Beat 5 — RECORD. The dated employment history, in full. The story beats above
+ * are the argument; this is the evidence a recruiter scrolls to check it against.
+ * Main roles expand to full detail; the ⋮ menu reveals the `more` roles.
+ */
 export const experience = {
-	kicker: '// 05 · experience',
-	headline: 'Where I’ve shipped.',
+	kicker: '// 05 · record',
+	headline: 'The full record.',
 	roles: [
 		{
 			title: 'Software Engineer',
 			org: 'CREST · University of Adelaide',
 			range: 'Dec 2023 – Jun 2026',
 			location: 'Adelaide, AU',
-			blurb: 'Full-stack features across 4–5 research web & mobile platforms, plus LLM/RAG infrastructure.',
+			blurb: 'Turned research workflows into products — 4–5 web & mobile platforms, plus LLM/RAG infrastructure.',
 			points: [
 				'Built full-stack features across 4–5 web & mobile platforms — React, Next.js, React Native, Node.js, FastAPI.',
 				'LLM integration & agentic features; RAG (e.g. Luna over NDIS docs); small-model training & quantisation (Unsloth).',
@@ -267,7 +328,7 @@ export const experience = {
 			org: 'ANZ New Zealand',
 			range: 'Mar 2019 – Sep 2020',
 			location: 'Wellington, NZ',
-			blurb: 'Java/Spring Boot disaster-recovery platform in a regulated banking environment.',
+			blurb: 'Replaced an Excel-run disaster-recovery workflow with a Java/Spring Boot platform, in a regulated bank.',
 			points: [
 				'Built a Java + Spring Boot web app (MS SQL Server) digitising a manual, Excel-based disaster-recovery workflow.',
 				'Designed the SQL Server schema; migrated data from a legacy MS Access database.',
@@ -297,7 +358,7 @@ export const experience = {
 			org: 'Eclipse CS',
 			range: 'Sep 2021 – Dec 2021',
 			location: 'Remote · Adelaide',
-			blurb: 'Computer-vision automation of 2D floor-plan analysis (PyTorch).',
+			blurb: 'Replaced hand-labelling of 2D floor plans with a PyTorch computer-vision model.',
 			points: [
 				'Built a computer-vision solution automating 2D floor-plan analysis, cutting manual labelling effort.',
 				'Collaborated with domain experts to design, test and refine models; presented results for integration.',
@@ -318,11 +379,13 @@ export const experience = {
 	] as Role[],
 }
 
-/** Beat 6 — CTA (scroll 83.3–100%) */
+/** Beat 6 — NEXT */
 export const cta = {
 	kicker: '// 06 · next',
 	headline: 'Available for new roles.',
-	body: 'Adelaide-based, open to remote. Product and fintech teams welcome.',
+	body:
+		'Adelaide-based, open to remote. If something on your team still runs on a spreadsheet and ' +
+		'goodwill — that’s the work I want.',
 	links: [
 		{ label: contact.email, href: `mailto:${contact.email}`, kind: 'email' as const },
 		{ label: 'LinkedIn', href: contact.linkedin, kind: 'linkedin' as const },
@@ -330,13 +393,17 @@ export const cta = {
 	],
 }
 
+/**
+ * Section ids are load-bearing — ChapterDots, scrollToSection and the SceneShell
+ * HUD readout all key off them. Change labels freely; change ids never.
+ */
 export const chapters = [
 	{ id: 'hook', label: 'Intro' },
-	{ id: 'foundation', label: 'Foundation' },
-	{ id: 'now', label: 'Now' },
-	{ id: 'approach', label: 'Approach' },
-	{ id: 'experience', label: 'Experience' },
-	{ id: 'contact', label: 'Contact' },
+	{ id: 'foundation', label: 'Proof' },
+	{ id: 'now', label: 'Pattern' },
+	{ id: 'approach', label: 'Method' },
+	{ id: 'experience', label: 'Record' },
+	{ id: 'contact', label: 'Next' },
 ] as const
 
 export type ChapterId = (typeof chapters)[number]['id']
