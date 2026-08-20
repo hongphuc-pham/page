@@ -277,25 +277,46 @@ section[id] { scroll-margin-top: 24px; }
 }
 @media (min-width: 1100px) { .scene-scrim { background: none; } }
 
-/* ---- Comic frame layer (see components/FrameScrub.tsx) --------------------
-   The scroll-scrubbed art for a beat, living INSIDE the HUD panel so the panel
-   frames it the way a comic gutter frames a panel.
+/* ---- The film (see scene/StageFilm.tsx) ----------------------------------
+   Fills the stage frame. This replaced the 3D lattice: the stage is a frame,
+   frames hold films, and the lattice was morphing abstract shapes that
+   illustrated nothing in the CV.
+   NB: no backticks in this string, comments included — see .pull-line. */
+/* The matte, and the letterbox that falls out of it for free.
 
-   z-index: -1 is load-bearing and subtle. .scene-inner has backdrop-filter,
-   which makes it a stacking context — so a negative z-index child is trapped
-   inside it and paints in the one slot we want: above the panel's own
-   background, below the copy. Without it the canvas is absolutely positioned
-   and would paint OVER the static text; clamped to the content column outside
-   the panel instead, it would be hidden by the panel's background entirely.
-   Both were tried. This is the slot that works. */
-.scene-frames {
+   The stage column is portrait (roughly 460x740 at desktop) while the film is
+   landscape (448x384). Cover-cropping one into the other threw away most of
+   the width — survivable for the spreadsheet, which is a repeating pattern,
+   but fatal for shots 3-5, whose whole content is five instances arranged
+   3 + 2. Crop those and the composition, which IS the meaning, is gone.
+
+   So the film keeps its own aspect, centred, and the dark ground above and
+   below it becomes the letterbox. That is what letterboxing actually is, and
+   it means the bars are never a fixed percentage guess: they are exactly
+   whatever is left over at this viewport. */
+.stage-film-box {
 	position: absolute;
 	inset: 0;
-	z-index: -1;
-	border-radius: inherit;
+	display: grid;
+	place-items: center;
 	overflow: hidden;
+	border-radius: inherit;
+	background: rgba(0, 0, 0, 0.4);
 	pointer-events: none;
 }
+
+.stage-film {
+	display: block;
+	width: 100%;
+	aspect-ratio: 448 / 384;
+	height: auto;
+	opacity: 0.95;
+}
+
+/* The readout and its progress hairline sit ON the lower matte — which is
+   where a timecode belongs. Above the film, hence the z-index. */
+.story-stage-readout,
+.story-stage-bar { z-index: 3; }
 
 /* ---- Degree cards (see sections/Scene2Foundation.tsx) --------------------
    Was <Stack><Box sx={…}>; moved here because that pair tips tsc over TS2590.

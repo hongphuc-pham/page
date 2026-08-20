@@ -1,8 +1,6 @@
 import { Typography, type SxProps, type Theme } from '@mui/material'
 import { useRef } from 'react'
-import { FrameScrub } from '../components/FrameScrub'
 import { foundation } from '../data/cv'
-import { SCHEMA } from '../scene/storyFrames'
 import { fonts, tokens } from '../theme'
 import { Headline, Kicker, SceneShell } from './SceneShell'
 import { useSceneTimeline } from './useSceneTimeline'
@@ -64,14 +62,7 @@ export function Scene2Foundation({ reduced, isMobile }: { reduced: boolean; isMo
 	)
 
 	return (
-		<SceneShell
-			id="foundation"
-			rootRef={root}
-			// One continuous shot under three captions: the grid beat 1 froze on
-			// holds, then its cells fly into table rows and the foreign keys draw
-			// themselves — timed to land as BEFORE → AFTER → RESULT arrive above it.
-			backdrop={<FrameScrub range={SCHEMA} beat={1} reduced={reduced} opacity={0.34} />}
-		>
+		<SceneShell id="foundation" rootRef={root}>
 			<Kicker className="line">{foundation.kicker}</Kicker>
 			<Headline className="line">{foundation.headline}</Headline>
 

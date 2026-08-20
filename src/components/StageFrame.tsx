@@ -2,7 +2,7 @@ import { useEffect, useRef, type ReactNode } from 'react'
 import { beatPos, SCENE_COUNT } from '../scene/useScrollProgress'
 
 /**
- * The framed right-hand column that holds the 3D stage.
+ * The framed right-hand column that holds the film.
  *
  * It exists so the canvas has an *edge*. Previously the canvas was
  * `position: fixed; inset: 0` while the content was a hard-bordered card —
@@ -15,7 +15,7 @@ import { beatPos, SCENE_COUNT } from '../scene/useScrollProgress'
  * on scroll, matching how the canvas itself consumes `beatPos`.
  */
 
-/** One label per formation in scene/LatticeField.tsx — the story, not the geometry. */
+/** One label per shot in scene/StageFilm.tsx — the story, not the geometry. */
 const STATE_LABELS = ['MANUAL', 'STRUCTURED', 'REPLICATED', 'VERIFIED', 'SHIPPED', 'SETTLED']
 
 export function StageFrame({ children }: { children: ReactNode }) {

@@ -417,6 +417,159 @@ function drawSchemaFrame(ctx, i) {
 	for (const [a, b] of FKS) drawFk(ctx, TABLES[a], TABLES[b], fkReveal, tableAlpha)
 }
 
+// ------------------------------------------- SHOTS 3-5 (beats 3, 4, 5)
+
+/**
+ * The back half of the film. One subject throughout — the schema from beat 2 —
+ * so the six shots read as one continuous take rather than six clips.
+ *
+ *   3 REPLICATE  the one schema shrinks into a slot and four more arrive
+ *   4 VERIFY     a scan sweeps the five; each is ticked as it passes
+ *   5 RECORD     the five collapse into dated rows on a ledger
+ *
+ * Five instances because there are five projects. The count is the content,
+ * not a composition choice.
+ */
+const SHOT_FRAMES = 32
+
+const GLYPH_W = 110
+const GLYPH_H = 84
+const SLOTS_5 = [
+	{ x: 45, y: 98 },
+	{ x: 169, y: 98 },
+	{ x: 293, y: 98 },
+	{ x: 107, y: 202 },
+	{ x: 231, y: 202 },
+].map((s) => ({ ...s, w: GLYPH_W, h: GLYPH_H }))
+
+/** Where beat 2 leaves the schema: one instance, near full frame. */
+const GLYPH_FULL = { x: 60, y: 70, w: 328, h: 244 }
+
+function lerpRect(a, b, t) {
+	return {
+		x: a.x + (b.x - a.x) * t,
+		y: a.y + (b.y - a.y) * t,
+		w: a.w + (b.w - a.w) * t,
+		h: a.h + (b.h - a.h) * t,
+	}
+}
+
+/** A schema, abstracted: outline, header bar, a few field rows. */
+function drawGlyph(ctx, r, alpha, rows = 4) {
+	if (alpha <= 0) return
+	ctx.lineWidth = 1
+	white(ctx, INK.header * alpha)
+	ctx.strokeRect(Math.round(r.x) + 0.5, Math.round(r.y) + 0.5, Math.round(r.w), Math.round(r.h))
+
+	const headH = Math.max(8, r.h * 0.16)
+	white(ctx, INK.tick * alpha)
+	ctx.fillRect(r.x + r.w * 0.09, r.y + headH * 0.42, r.w * 0.44, Math.max(2, r.h * 0.026))
+	white(ctx, INK.grid * alpha)
+	line(ctx, r.x, r.y + headH, r.x + r.w, r.y + headH)
+
+	const gap = (r.h - headH) / (rows + 1)
+	for (let i = 0; i < rows; i++) {
+		white(ctx, INK.value * alpha)
+		ctx.fillRect(r.x + r.w * 0.09, r.y + headH + gap * (i + 0.7), r.w * 0.62, Math.max(2, r.h * 0.022))
+	}
+}
+
+/** Checkmark inside a glyph's top-right corner. */
+function drawTick(ctx, r, alpha) {
+	if (alpha <= 0) return
+	const cx = r.x + r.w - 17
+	const cy = r.y + 11
+	ctx.lineWidth = 1.8
+	white(ctx, INK.cursor * alpha)
+	ctx.beginPath()
+	ctx.moveTo(cx - 4, cy)
+	ctx.lineTo(cx - 1, cy + 3.5)
+	ctx.lineTo(cx + 5, cy - 4)
+	ctx.stroke()
+}
+
+/** SHOT 3 — REPLICATE. One becomes five. */
+function drawReplicateFrame(ctx, i) {
+	const p = i / (SHOT_FRAMES - 1)
+
+	// The original travels to slot 0 over the first two thirds.
+	const travel = smoothstep(p / 0.66)
+	drawGlyph(ctx, lerpRect(GLYPH_FULL, SLOTS_5[0], travel), 1, travel > 0.5 ? 4 : 6)
+
+	// The other four arrive one at a time, and only once the first has landed —
+	// a copy cannot precede the thing it is a copy of.
+	for (let k = 1; k < SLOTS_5.length; k++) {
+		const delay = 0.55 + (k - 1) * 0.1
+		const t = smoothstep((p - delay) / 0.3)
+		if (t <= 0) continue
+		const s = SLOTS_5[k]
+		// Scale up from 0.92, never from nothing.
+		const g = 0.92 + 0.08 * t
+		drawGlyph(
+			ctx,
+			{ x: s.x + (s.w * (1 - g)) / 2, y: s.y + (s.h * (1 - g)) / 2, w: s.w * g, h: s.h * g },
+			t,
+		)
+	}
+}
+
+/** SHOT 4 — VERIFY. A scan sweeps the set; each instance is ticked as it passes. */
+function drawVerifyFrame(ctx, i) {
+	const p = i / (SHOT_FRAMES - 1)
+	// The scan runs edge to edge over the first 80%, then leaves.
+	const scanX = PAD_X + (FRAME_W - PAD_X * 2) * smoothstep(p / 0.8)
+	const scanAlpha = 1 - smoothstep((p - 0.8) / 0.2)
+
+	for (const s of SLOTS_5) {
+		const passed = scanX > s.x + s.w * 0.5
+		drawGlyph(ctx, s, passed ? 1 : 0.55)
+		drawTick(ctx, s, passed ? smoothstep((scanX - (s.x + s.w * 0.5)) / 40) : 0)
+	}
+
+	if (scanAlpha > 0) {
+		ctx.lineWidth = 1
+		white(ctx, INK.cursor * 0.55 * scanAlpha)
+		line(ctx, scanX, PAD_Y, scanX, FRAME_H - PAD_Y)
+	}
+}
+
+/** SHOT 5 — RECORD. The set collapses into dated rows. */
+function drawRecordFrame(ctx, i) {
+	const p = i / (SHOT_FRAMES - 1)
+	const ROW_X = 96
+	const ROW_W = 268
+	const ROW_TOP = 108
+	const ROW_GAP = 42
+
+	for (let k = 0; k < SLOTS_5.length; k++) {
+		const delay = k * 0.07
+		const t = smoothstep((p - delay) / (1 - 0.35))
+		const row = { x: ROW_X, y: ROW_TOP + k * ROW_GAP, w: ROW_W, h: 4 }
+		const r = lerpRect(SLOTS_5[k], row, t)
+
+		if (t < 0.85) {
+			drawGlyph(ctx, r, 1 - smoothstep((t - 0.5) / 0.35), 4)
+		}
+		if (t > 0.45) {
+			const a = smoothstep((t - 0.45) / 0.4)
+			// the row itself
+			white(ctx, INK.value * a)
+			ctx.fillRect(r.x, r.y, r.w, 3)
+			// the date tick to its left — this is a dated ledger, not a list
+			white(ctx, INK.tick * a)
+			ctx.fillRect(ROW_X - 40, r.y, 28, 2)
+		}
+	}
+
+	// The ledger's spine, drawn last and only once rows exist to hang on it.
+	const spine = smoothstep((p - 0.55) / 0.45)
+	if (spine > 0) {
+		ctx.lineWidth = 1
+		white(ctx, INK.grid * spine)
+		line(ctx, ROW_X - 10, ROW_TOP - 14, ROW_X - 10, ROW_TOP + (SLOTS_5.length - 1) * ROW_GAP + 16)
+	}
+}
+
 // ---------------------------------------------------------------- build
 
 /**
@@ -439,6 +592,24 @@ const SHEETS = [
 		count: SCHEMA_FRAMES,
 		draw: (ctx, n) => drawSchemaFrame(ctx, n),
 		ranges: `SCHEMA 0–${SCHEMA_FRAMES - 1}`,
+	},
+	{
+		file: 'replicate-frames.webp',
+		count: SHOT_FRAMES,
+		draw: (ctx, n) => drawReplicateFrame(ctx, n),
+		ranges: `REPLICATE 0–${SHOT_FRAMES - 1}`,
+	},
+	{
+		file: 'verify-frames.webp',
+		count: SHOT_FRAMES,
+		draw: (ctx, n) => drawVerifyFrame(ctx, n),
+		ranges: `VERIFY 0–${SHOT_FRAMES - 1}`,
+	},
+	{
+		file: 'record-frames.webp',
+		count: SHOT_FRAMES,
+		draw: (ctx, n) => drawRecordFrame(ctx, n),
+		ranges: `RECORD 0–${SHOT_FRAMES - 1}`,
 	},
 ]
 

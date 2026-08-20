@@ -2,11 +2,12 @@ import { Box } from '@mui/material'
 import { useReducedMotion } from 'motion/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { lazy, Suspense, useLayoutEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { AudioToggle } from '../components/AudioToggle'
 import { ChapterDots } from '../components/ChapterDots'
 import { ScrollProgressBar } from '../components/ScrollProgressBar'
 import { StageFrame } from '../components/StageFrame'
+import { StageFilm } from '../scene/StageFilm'
 import { VideoBackdrop } from '../components/VideoBackdrop'
 import { destroySmoothScroll, initSmoothScroll } from '../lib/lenis'
 import { beatPos, scrollProgress, SCENE_COUNT } from '../scene/useScrollProgress'
@@ -18,9 +19,9 @@ import { Scene5Experience } from '../sections/Scene5Experience'
 import { Scene6Contact } from '../sections/Scene6Contact'
 import { useThemeMode } from '../utils/useThemeMode'
 
-// three.js + fiber live in their own lazy chunk — the DOM story is readable
-// before (and without) WebGL.
-const CanvasRoot = lazy(() => import('../scene/CanvasRoot'))
+// The stage used to hold a lazy three.js canvas (scene/CanvasRoot + LatticeField).
+// It now holds the film — see scene/StageFilm for why. The 3D files are still in
+// the tree but nothing imports them, so three.js no longer ships.
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -68,15 +69,12 @@ export function Story() {
 		<>
 			<VideoBackdrop mode={mode} reduced={reduced} />
 
-			{/* The stage owns the canvas's box — see components/StageFrame and the
-			    --stage-* variables in theme.ts. It renders its frame with or without
-			    WebGL, so an empty frame is still a deliberate part of the layout.
-			    No Suspense fallback: the backdrop below is already a finished
-			    background, so there is nothing to hold the space for. */}
+			{/* The stage owns the film's box — see components/StageFrame and the
+			    --stage-* variables in theme.ts. The frame draws with or without the
+			    film, so a shot that has not loaded yet still leaves a deliberate
+			    part of the layout rather than a hole. */}
 			<StageFrame>
-				<Suspense fallback={null}>
-					<CanvasRoot mode={mode} animate={!reduced} isMobile={isMobile} />
-				</Suspense>
+				<StageFilm reduced={reduced} />
 			</StageFrame>
 
 			<ScrollProgressBar />

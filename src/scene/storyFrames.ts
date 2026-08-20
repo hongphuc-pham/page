@@ -1,14 +1,17 @@
+import recordSheetUrl from '../assets/panels/record-frames.webp'
+import replicateSheetUrl from '../assets/panels/replicate-frames.webp'
 import schemaSheetUrl from '../assets/panels/schema-frames.webp'
 import storySheetUrl from '../assets/panels/story-frames.webp'
+import verifySheetUrl from '../assets/panels/verify-frames.webp'
 
 /**
- * Geometry of the comic frame sheets drawn by `components/FrameScrub.tsx`.
+ * Geometry of the film's frame sheets, drawn by `scene/StageFilm.tsx`.
  *
  * MUST match the constants at the top of `scripts/make-panels.cjs`. Re-run
  * that script after changing anything here (or, more usefully, change it
  * there and mirror the numbers back).
  *
- * The sheets are white-on-transparent line art; FrameScrub tints them from the
+ * The sheets are white-on-transparent line art; StageFilm tints them from the
  * live theme tokens, which is why one sheet serves both dark and light.
  *
  * One sheet per beat, except where beats share art: beats 1 and 6 share the
@@ -24,6 +27,9 @@ export type Sheet = { url: string; cols: number }
 
 const STORY_SHEET: Sheet = { url: storySheetUrl, cols: SHEET_COLS }
 const SCHEMA_SHEET: Sheet = { url: schemaSheetUrl, cols: SHEET_COLS }
+const REPLICATE_SHEET: Sheet = { url: replicateSheetUrl, cols: SHEET_COLS }
+const VERIFY_SHEET: Sheet = { url: verifySheetUrl, cols: SHEET_COLS }
+const RECORD_SHEET: Sheet = { url: recordSheetUrl, cols: SHEET_COLS }
 
 export type FrameRange = { sheet: Sheet; from: number; to: number }
 
@@ -48,6 +54,18 @@ export const CELLS_STILL = 35
  * it was given a structure.
  */
 export const SCHEMA: FrameRange = { sheet: SCHEMA_SHEET, from: 0, to: 39 }
+
+/**
+ * Beat 3 — the one schema shrinks into a slot and four more arrive, staggered.
+ * Five because there are five projects; the count is content, not composition.
+ */
+export const REPLICATE: FrameRange = { sheet: REPLICATE_SHEET, from: 0, to: 31 }
+
+/** Beat 4 — a scan sweeps the five; each is ticked as it passes. */
+export const VERIFY: FrameRange = { sheet: VERIFY_SHEET, from: 0, to: 31 }
+
+/** Beat 5 — the five collapse into dated rows hung on a ledger spine. */
+export const RECORD: FrameRange = { sheet: RECORD_SHEET, from: 0, to: 31 }
 
 /**
  * Beat 6 — the same grid, cleared, one cursor blinking. Periodic over its 12

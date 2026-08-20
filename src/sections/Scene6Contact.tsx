@@ -2,10 +2,8 @@ import { DownloadIcon, EmailIcon, GitHubIcon, LinkedInIcon } from '../components
 import { Box, Button, Link, Stack, Typography } from '@mui/material'
 import { useRef } from 'react'
 import resumeDocx from '../assets/Phuc_Pham-CV-0401766596.docx'
-import { FrameScrub } from '../components/FrameScrub'
 import { Magnetic } from '../components/motion/Magnetic'
 import { contact, cta } from '../data/cv'
-import { EMPTY } from '../scene/storyFrames'
 import { fonts, tokens } from '../theme'
 import { Body, Headline, Kicker, SceneShell } from './SceneShell'
 import { useSceneTimeline } from './useSceneTimeline'
@@ -33,14 +31,7 @@ export function Scene6Contact({ reduced, isMobile }: { reduced: boolean; isMobil
 	)
 
 	return (
-		<SceneShell
-			id="contact"
-			rootRef={root}
-			// The loop closes. Same grid as beat 1, cleared, one cursor blinking.
-			// 'loop' rather than 'scrub' on purpose: by here the reader has stopped
-			// scrolling, and a frozen cursor would read as broken instead of waiting.
-			backdrop={<FrameScrub range={EMPTY} mode="loop" beat={5} loopMs={2200} reduced={reduced} opacity={0.32} />}
-		>
+		<SceneShell id="contact" rootRef={root}>
 			<Box>
 				<Kicker className="line">{cta.kicker}</Kicker>
 				<Headline className="line">{cta.headline}</Headline>

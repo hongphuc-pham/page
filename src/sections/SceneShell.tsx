@@ -68,21 +68,11 @@ export function SceneShell({
 	id,
 	rootRef,
 	children,
-	backdrop,
 	maxWidth = 600,
 }: {
 	id: string
 	rootRef: RefObject<HTMLElement>
 	children: ReactNode
-	/**
-	 * Comic art layer for this beat — see components/FrameScrub. Rendered
-	 * INSIDE the HUD panel, which is both the only place it is actually visible
-	 * (the panel paints its own semi-opaque background over anything behind it)
-	 * and the right place conceptually: the art becomes the comic panel, framed
-	 * by the same brackets as the copy. Layering is handled by .scene-frames in
-	 * theme.ts — see the note there about the backdrop-filter stacking context.
-	 */
-	backdrop?: ReactNode
 	maxWidth?: number
 }) {
 	const meta = sectionMeta(id)
@@ -97,12 +87,6 @@ export function SceneShell({
 			    readout, and a faint scanline. Fades/moves in–out via the scene's
 			    own GSAP timeline (it targets .scene-inner). */}
 			<div className="scene-inner" style={{ maxWidth }}>
-				{backdrop ? (
-					<div aria-hidden className="scene-frames">
-						{backdrop}
-					</div>
-				) : null}
-
 				{/* header readout */}
 				<div className="hud-header">
 					<div aria-hidden className="hud-dot" />
