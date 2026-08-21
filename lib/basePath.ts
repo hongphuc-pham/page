@@ -16,5 +16,11 @@ export function withBase(assetPath: string): string {
 	return `${BASE}${assetPath}`
 }
 
-/** Where the CV lives. One constant, so header and footer cannot drift. */
-export const CV_HREF = withBase('/Pham_HongPhuc_CV.pdf')
+/**
+ * Where the CV lives. One constant, so header and footer cannot drift.
+ *
+ * This is the .docx that ships in /public — the standalone HTML linked a
+ * Pham_HongPhuc_CV.pdf that was never in the repo, so that link 404'd. Point
+ * this back at a .pdf the moment one is exported into /public.
+ */
+export const CV_HREF = withBase('/Pham_HongPhuc_CV.docx')

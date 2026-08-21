@@ -1,63 +1,72 @@
-# Phuc Pham — Cinematic CV (React + Vite + R3F + GSAP)
+# Portfolio — Next.js
 
-One-page, scroll-driven storytelling CV. A persistent three.js canvas sits
-behind the DOM; scroll progress drives the camera, the hero shard, lighting,
-and postprocessing across five pinned "beats". See `STORY.md` for the beat
-map and where to tweak everything.
+The site at https://hongphuc-pham.github.io/page/. Next.js App Router, static
+export, deployed by `.github/workflows/deploy.yml` on every push to `main`.
 
-## Tech
-- React 18 + Vite + TypeScript
-- MUI v5 + Emotion (CSS-variable dual theme, dark default)
-- three + @react-three/fiber + @react-three/postprocessing (lazy chunk)
-- GSAP ScrollTrigger (scrubbed, pinned scenes) + Lenis smooth scroll
-- framer-motion (micro-interactions: magnetic buttons, card tilt)
-- react-router-dom (HashRouter, GitHub Pages friendly)
-
-## Local dev
-```bash
-pnpm install
-pnpm dev
-```
-> Windows + WSL note: install and run from the SAME OS — see
-> `.claude/rules/dev-environment.md` if you hit `@rollup/rollup-*` errors.
-
-## Build
-```bash
-pnpm build
-pnpm preview
-```
-
-## Content editing
-All CV copy lives in `src/data/cv.ts` (single source of truth, with
-correction notes). The 3D look is tuned via commented constant arrays in
-`src/scene/*` — one entry per beat.
-
-## Swapping the hero object for a custom GLTF
-
-The shard is procedural (`src/scene/HeroObject.tsx`). To replace it with a
-GLTF model later:
-
-1. `pnpm add @react-three/drei`, put your model at `public/models/hero.glb`
-   (keep it small — the current shard is ~80 triangles).
-2. In `HeroObject.tsx`:
-   ```tsx
-   import { useGLTF } from '@react-three/drei'
-   useGLTF.preload('models/hero.glb')
-   const { scene } = useGLTF('models/hero.glb')
-   // render <primitive object={scene} /> inside the <group ref={group}>
-   ```
-3. Keep the `useFrame` block — rotation, color and fracture logic read from
-   scroll progress and can drive your model's materials the same way. The
-   displacement loop only applies to the procedural geometry; delete it or
-   port it to your mesh's position attribute.
-4. Vertex-color / material notes: the beat color comes from `COLOR_STOPS` —
-   apply it to your model's material `color`/`emissive` in the same loop.
-
-## GitHub Pages
-- `package.json` includes `homepage`, `predeploy`, and `deploy` scripts.
-- Hash Router so refresh works on GitHub Pages.
+Started life as `portfolio-standalone.html` — the same design, rebuilt as React
+components with a real Tailwind build instead of the CDN script. That HTML file
+and the older Vite/three.js app it replaced are gone; `git log` has them.
 
 ```bash
-pnpm deploy
+pnpm install     # or npm install
+pnpm dev         # http://localhost:3000
 ```
-Builds to `dist/` then publishes to the `gh-pages` branch.
+
+## Where things live
+
+| To change… | Go to |
+|---|---|
+| **Any word on the site** | `lib/cv.ts` |
+| Colours, spacing, fonts | `tailwind.config.ts` |
+| Global CSS, motion tokens, component classes | `app/globals.css` |
+| Page order | `app/page.tsx` |
+| Header, scroll-spy, mobile drawer | `components/SiteHeader.tsx` |
+| Project bento grid | `components/Projects.tsx` |
+| Everything else on the page | `components/Sections.tsx` |
+
+## The one rule
+
+`lib/cv.ts` is the single source of truth, and every claim in it traces to
+`docs/Pham_HongPhuc_Career_Facts.md`. Components render content; they never
+hold copy.
+
+The **honesty rule is a layout rule**. A project with a grounded `before`
+gets a caption box and an AFTER label. A project without one — ElevexAI and
+AIDFest, which are product surfaces rather than automations — gets neither,
+and its body copy simply starts. That asymmetry is deliberate. Do not "fix"
+it by inventing a before-line; see the do-not-claim list at the top of
+`lib/cv.ts`.
+
+## Server vs client
+
+Almost everything is a server component. Only four are `'use client'`, and
+each for one reason:
+
+| Component | Why it needs the client |
+|---|---|
+| `SiteHeader` | scroll position, spy state, drawer |
+| `Reveal` | IntersectionObserver |
+| `HeroVideo` | HLS playback, dynamic `hls.js` import |
+| `ContactCode` | clipboard |
+
+`Ticker` looks interactive but is not — the two copies its keyframe needs are
+just rendered twice, so it stays on the server.
+
+## Motion
+
+- `transform` and `opacity` only, so nothing triggers layout or paint.
+- Custom easing (`--ease-out`); never `ease-in` on UI.
+- Hover is gated behind `@media (hover: hover) and (pointer: fine)` so touch
+  devices don't get stuck hover states.
+- `prefers-reduced-motion` removes movement and stops the ticker, but keeps
+  content in its final state — fewer and gentler, not nothing.
+- Reveals fire **once**. A card that re-animates on every pass reads as a
+  glitch rather than an entrance.
+
+## Still to do
+
+- `public/Pham_HongPhuc_CV.pdf` does not exist yet. The header and footer
+  both link to it. There is a `.docx` in the Vite app's `src/assets/`.
+- The hero video is still the stock stream from the original template. Swap
+  the `HERO_STREAM` constant in `components/Sections.tsx` for real footage,
+  or delete `<HeroVideo />` and let the gradient carry the hero.

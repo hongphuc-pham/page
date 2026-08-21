@@ -1,8 +1,3 @@
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-
-const here = path.dirname(fileURLToPath(import.meta.url))
-
 /**
  * GitHub Pages is static hosting with no Node server, so this is a static
  * export. `next build` writes ./out — there is no `next start`.
@@ -34,14 +29,6 @@ const nextConfig = {
 	},
 
 	/**
-	 * This app lives inside a repo that has its own lockfile at the root (the
-	 * Vite site). Next walks up looking for a workspace root, finds that one,
-	 * and traces the entire parent repo into the build output. Pinning the
-	 * root here keeps the trace to this directory.
-	 */
-	outputFileTracingRoot: here,
-
-	/**
 	 * The dev server runs inside WSL while the files live on the Windows side
 	 * (/mnt/c). inotify does not fire for Windows-side writes, so the default
 	 * watcher never sees an edit: the page keeps serving stale modules and
@@ -49,8 +36,6 @@ const nextConfig = {
 	 *
 	 * Costs a little idle CPU, which is why node_modules is excluded — polling
 	 * that over the 9p mount is what makes the whole VM crawl.
-	 *
-	 * The Vite app at the repo root needs the same thing (server.watch.usePolling).
 	 */
 	webpack: (config, { dev }) => {
 		if (dev) {
