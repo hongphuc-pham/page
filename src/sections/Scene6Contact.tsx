@@ -1,7 +1,4 @@
-import DownloadIcon from '@mui/icons-material/DownloadOutlined'
-import EmailIcon from '@mui/icons-material/EmailOutlined'
-import GitHubIcon from '@mui/icons-material/GitHub'
-import LinkedInIcon from '@mui/icons-material/LinkedIn'
+import { DownloadIcon, EmailIcon, GitHubIcon, LinkedInIcon } from '../components/icons'
 import { Box, Button, Link, Stack, Typography } from '@mui/material'
 import { useRef } from 'react'
 import resumeDocx from '../assets/Phuc_Pham-CV-0401766596.docx'
@@ -18,9 +15,9 @@ const LINK_ICONS = {
 } as const
 
 /**
- * Beat 6 — CTA · scroll 0.833–1.00
- * Warm light returns, the shard settles. Real links, large tap targets —
- * no exit animation (it's the end of the film).
+ * Beat 6 — NEXT
+ * Warm light returns and the field settles into its last formation. Real links,
+ * large tap targets — no exit animation (it's the end of the film).
  */
 export function Scene6Contact({ reduced, isMobile }: { reduced: boolean; isMobile: boolean }) {
 	const root = useRef<HTMLElement>(null)

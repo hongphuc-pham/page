@@ -1,16 +1,47 @@
-import { Box, Typography } from '@mui/material'
+import { Typography, type SxProps, type Theme } from '@mui/material'
 import gsap from 'gsap'
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, type CSSProperties } from 'react'
 import { hook } from '../data/cv'
 import { fonts, tokens } from '../theme'
 import { Body, Headline, Kicker, SceneShell } from './SceneShell'
 import { useSceneTimeline } from './useSceneTimeline'
 
 /**
- * Beat 1 — HOOK · scroll 0.00–0.20
- * Content is visible at load (a quiet entrance tween), then scrubs OUT as
- * the story begins. The shard sits front and center behind the type.
+ * Beat 1 — INTRO
+ * The thesis: "I delete the manual step." Visible at load (a quiet entrance
+ * tween — the page must never open blank), then scrubs OUT as the story
+ * begins. The field in the stage is at its most disordered here; it only
+ * starts organising once beat 2 gives it a reason to.
  */
+
+/* Hoisted so each is checked once against a known annotation. Plain `style`
+   for the decorative rule: a bare MUI <Box> is enough to trip TS2590 on its
+   own — same reason SceneShell's Corner and GrainOverlay use plain elements. */
+const META_SX: SxProps<Theme> = {
+	fontFamily: fonts.mono,
+	fontSize: 12,
+	letterSpacing: '0.14em',
+	color: tokens.text.muted,
+	textTransform: 'uppercase',
+	mt: 1,
+}
+
+const SCROLL_SX: SxProps<Theme> = {
+	fontFamily: fonts.mono,
+	fontSize: 10,
+	letterSpacing: '0.3em',
+	color: tokens.text.muted,
+	mt: 1.5,
+}
+
+const RULE_STYLE: CSSProperties = {
+	marginTop: 56,
+	width: 2,
+	height: 56,
+	borderRadius: 2,
+	background: `linear-gradient(180deg, ${tokens.primary}, transparent)`,
+}
+
 export function Scene1Hook({ reduced, isMobile }: { reduced: boolean; isMobile: boolean }) {
 	const root = useRef<HTMLElement>(null)
 
@@ -41,44 +72,20 @@ export function Scene1Hook({ reduced, isMobile }: { reduced: boolean; isMobile: 
 
 	return (
 		<SceneShell id="hook" rootRef={root}>
-			<Box>
-				<Kicker className="line">{hook.kicker}</Kicker>
-				<Headline className="line">{hook.headline}</Headline>
-				<Body className="line" maxWidth={520}>
-					{hook.positioning}
-				</Body>
-				<Typography
-					className="line"
-					sx={{
-						fontFamily: fonts.mono,
-						fontSize: 12,
-						letterSpacing: '0.14em',
-						color: tokens.text.muted,
-						textTransform: 'uppercase',
-						mt: 1,
-					}}
-				>
-					{hook.meta}
-				</Typography>
-				<Box
-					className="line"
-					aria-hidden
-					sx={{
-						mt: 7,
-						width: '2px',
-						height: 56,
-						borderRadius: 2,
-						background: `linear-gradient(180deg, ${tokens.primary}, transparent)`,
-					}}
-				/>
-				<Typography
-					className="line"
-					sx={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: '0.3em', color: tokens.text.muted, mt: 1.5 }}
-				>
-					SCROLL
-				</Typography>
-			</Box>
-			{/* Body centering wrapper uses SceneShell; textAlign handled above */}
+			<Kicker className="line">{hook.kicker}</Kicker>
+			<Headline className="line">{hook.headline}</Headline>
+			<Body className="line" maxWidth={520}>
+				{hook.positioning}
+			</Body>
+			<Typography className="line" sx={META_SX}>
+				{hook.meta}
+			</Typography>
+
+			{/* scroll cue: a hairline that fades downward, then the word */}
+			<div aria-hidden className="line" style={RULE_STYLE} />
+			<Typography className="line" sx={SCROLL_SX}>
+				SCROLL
+			</Typography>
 		</SceneShell>
 	)
 }

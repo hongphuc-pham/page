@@ -1,4 +1,4 @@
-import { motion, useReducedMotion, useSpring } from 'framer-motion'
+import { motion, useMotionTemplate, useReducedMotion, useSpring } from 'motion/react'
 import { useRef, type ReactNode } from 'react'
 
 /**
@@ -10,6 +10,11 @@ export function Magnetic({ children, strength = 0.3 }: { children: ReactNode; st
 	const reduced = useReducedMotion()
 	const x = useSpring(0, { stiffness: 260, damping: 18, mass: 0.6 })
 	const y = useSpring(0, { stiffness: 260, damping: 18, mass: 0.6 })
+	// Motion's `x`/`y` shorthand is driven from requestAnimationFrame on the
+	// main thread, so it drops frames exactly when the page is busiest — which
+	// here is during scroll, with GSAP timelines running. A composed
+	// translate3d string is handed to the compositor instead.
+	const transform = useMotionTemplate`translate3d(${x}px, ${y}px, 0)`
 
 	if (reduced) return <>{children}</>
 
@@ -30,7 +35,7 @@ export function Magnetic({ children, strength = 0.3 }: { children: ReactNode; st
 			ref={ref}
 			onMouseMove={onMove}
 			onMouseLeave={onLeave}
-			style={{ x, y, display: 'inline-flex' }}
+			style={{ transform, display: 'inline-flex' }}
 		>
 			{children}
 		</motion.div>

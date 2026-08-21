@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    /* incremental is off on purpose. `include` covers .next/types/**, and a
+       tsbuildinfo written by a standalone `tsc --noEmit` records route type
+       files that `next build` then regenerates — which fails the build with
+       "File '.next/types/app/page.ts' not found". Prefer `pnpm build` (it
+       type-checks anyway) over running tsc separately. */
+    "incremental": false,
+    "plugins": [{ "name": "next" }],
+    "paths": { "@/*": ["./*"] }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}

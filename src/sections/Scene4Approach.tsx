@@ -6,10 +6,11 @@ import { Body, Headline, Kicker, SceneShell } from './SceneShell'
 import { useSceneTimeline } from './useSceneTimeline'
 
 /**
- * Beat 4 — APPROACH · scroll 0.500–0.667
- * The stack is a CV-style skill matrix: category rows, each row's chips fly in
- * from the side and settle. The whole scene scrubs out as you roll to the
- * Experience beat.
+ * Beat 4 — METHOD
+ * "How I keep it honest." Deleting someone's manual step means they now trust
+ * your software instead — this beat is what earns that. The stack is a CV-style
+ * skill matrix: category rows, each row's chips fly in from the side and settle.
+ * Scrubs out as you roll to the Record beat.
  */
 export function Scene4Approach({ reduced, isMobile }: { reduced: boolean; isMobile: boolean }) {
 	const root = useRef<HTMLElement>(null)
@@ -34,6 +35,26 @@ export function Scene4Approach({ reduced, isMobile }: { reduced: boolean; isMobi
 			<Headline className="line" size="md">
 				{approach.headline}
 			</Headline>
+			{/* The claim this beat has to earn, given its own line. Everything
+			    below it — the practices, then the matrix — is the evidence.
+			    Plain <p> + class, NOT <Typography sx={…}>: one more hoisted
+			    SxProps in this program is enough to tip tsc over TS2590 (it
+			    did — see ERR-20260820-04). Styled as .pull-line in theme.ts. */}
+			<p className="line pull-line">{approach.pull}</p>
+
+			{/* The evidence for that claim, one practice per panel. Each panel
+			    leads with the tool and drops to the scope beneath it, so the row
+			    scans as five things rather than as a sentence with commas.
+			    Strings are verbatim from cv.ts — the split is presentational. */}
+			<div className="rule-grid">
+				{approach.practices.map((p) => (
+					<div key={p.tool} className="rule-panel">
+						<b>{p.tool}</b>
+						{p.scope ? <span>{p.scope}</span> : null}
+					</div>
+				))}
+			</div>
+
 			<Body className="line">{approach.body}</Body>
 
 			<Stack spacing={1.75} sx={{ mt: 3 }}>

@@ -1,8 +1,6 @@
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import NorthEastIcon from '@mui/icons-material/NorthEast'
+import { ChevronLeftIcon, ChevronRightIcon, NorthEastIcon } from '../components/icons'
 import { Box, Chip, IconButton, Link, Stack, Typography } from '@mui/material'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion } from 'motion/react'
 import { useRef, useState } from 'react'
 import { recentWork, type Project } from '../data/cv'
 import { fonts, tokens } from '../theme'
@@ -10,14 +8,18 @@ import { Body, Headline, Kicker, SceneShell } from './SceneShell'
 import { useSceneTimeline } from './useSceneTimeline'
 
 /**
- * Beat 3 — NOW · scroll 0.333–0.500
- * The project work is an interactive CAROUSEL: the front card is shown in full
- * and arrows / dots browse all five at any time, decoupled from scroll — every
- * card is always reachable and readable. Non-pinned (like Experience) so the
- * content is naturally scrollable; a scrub trigger just tracks the beat.
+ * Beat 3 — PATTERN
+ * "Then it kept happening." Beat 2 proved the move once; this beat shows it is
+ * a habit, not a fluke — and that these ones are downloadable.
+ *
+ * Cards lead with the manual process they replaced, where there is a grounded
+ * one (see the `before` rule in data/cv.ts). An interactive CAROUSEL: the front
+ * card shows in full and arrows / dots browse all five at any time, decoupled
+ * from scroll, so every card is reachable and readable. Non-pinned (like
+ * Experience) so content scrolls naturally; a scrub trigger just tracks the beat.
  */
 
-const CARD_H = 336 // px — fixed so the swap doesn't reflow the page
+const CARD_H = 372 // px — fixed so the swap doesn't reflow the page
 const THUMB_H = 176 // px — thumbnail height (leaves room for name + links)
 
 export function Scene3Now({ reduced, isMobile }: { reduced: boolean; isMobile: boolean }) {
@@ -122,7 +124,7 @@ export function Scene3Now({ reduced, isMobile }: { reduced: boolean; isMobile: b
 											borderRadius: 999,
 											bgcolor: i === active ? tokens.primary : tokens.text.muted,
 											opacity: i === active ? 1 : 0.45,
-											transition: 'all 220ms ease',
+											transition: 'width 220ms var(--ease-out), background-color 220ms ease, opacity 220ms ease',
 										}}
 									/>
 								</Box>
@@ -273,9 +275,31 @@ function ProjectCard({
 						{project.tagline}
 					</Typography>
 				</Stack>
-				<Typography variant="body2" sx={{ color: tokens.text.secondary, lineHeight: 1.55 }}>
-					{project.detail}
-				</Typography>
+				{/* Two card shapes, and which one you get is decided by the data.
+				    WITH a grounded before-line: a caption box, then the detail
+				    labelled AFTER — the card performs the site's whole argument in
+				    miniature. WITHOUT one (ElevexAI, AIDFest — product surfaces, not
+				    automations): no box, no label, the detail just starts. See the
+				    `before` rule at the top of data/cv.ts, and .card-before in
+				    theme.ts for why the asymmetry is deliberate. */}
+				{project.before ? (
+					<>
+						<div className="card-before">
+							<b>Before</b>
+							<span>{project.before}</span>
+						</div>
+						<div className="card-after">
+							<b>After</b>
+							<Typography variant="body2" className="card-detail">
+								{project.detail}
+							</Typography>
+						</div>
+					</>
+				) : (
+					<Typography variant="body2" className="card-detail">
+						{project.detail}
+					</Typography>
+				)}
 				<Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap sx={{ mt: 0.25 }}>
 					{project.tech.map((t) => (
 						<Chip key={t} label={t} size="small" />
@@ -301,7 +325,7 @@ function ProjectCard({
 								}}
 							>
 								{l.label}
-								<NorthEastIcon sx={{ fontSize: 13 }} />
+								<NorthEastIcon size={13} />
 							</Link>
 						))}
 					</Stack>

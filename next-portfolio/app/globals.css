@@ -1,0 +1,379 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Motion tokens. Never ease-in on UI: it delays the first frames, which is
+   exactly when the eye is on the element.
+   ────────────────────────────────────────────────────────────────────────── */
+:root {
+	--ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+	--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+	--nav-h: 68px;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	background-color: #070b0a;
+	color: #e0e3e1;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Anchors must clear the fixed header. */
+section[id] {
+	scroll-margin-top: calc(var(--nav-h) + 24px);
+}
+
+:focus-visible {
+	outline: 2px solid #5ed29c;
+	outline-offset: 3px;
+	border-radius: 2px;
+}
+
+@layer components {
+	/* ── surfaces ──────────────────────────────────────────────────────────
+	   Named properties, never `transition: all` — `all` animates layout
+	   properties too, which is the most common cause of janky hover. */
+	.glass-panel {
+		background: rgba(255, 255, 255, 0.01);
+		backdrop-filter: blur(24px);
+		box-shadow: inset 0 0 20px rgba(94, 210, 156, 0.05);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		position: relative;
+		transition:
+			border-color 240ms var(--ease-out),
+			box-shadow 240ms var(--ease-out),
+			transform 240ms var(--ease-out);
+	}
+
+	/* Touch fires :hover on tap and leaves it stuck. Gate to real pointers. */
+	@media (hover: hover) and (pointer: fine) {
+		.glass-panel:hover {
+			border-color: rgba(94, 210, 156, 0.3);
+			box-shadow:
+				inset 0 0 20px rgba(94, 210, 156, 0.1),
+				inset 0 1px 0 rgba(255, 255, 255, 0.1);
+			transform: translateY(-2px);
+		}
+	}
+
+	.skill-tag {
+		background: transparent;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		color: #bccac0;
+		padding: 4px 12px;
+		border-radius: 9999px;
+		font-size: 12px;
+		font-weight: 600;
+		line-height: 1.6;
+		transition:
+			color 180ms ease,
+			border-color 180ms ease,
+			background-color 180ms ease,
+			box-shadow 180ms ease;
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.skill-tag:hover {
+			border-color: rgba(94, 210, 156, 0.5);
+			color: #5ed29c;
+			background: rgba(255, 255, 255, 0.03);
+			box-shadow: 0 0 8px rgba(94, 210, 156, 0.2);
+		}
+	}
+
+	/* Press feedback. Without it a control gives no sign it heard the click. */
+	.press:active {
+		transform: scale(0.97);
+	}
+	.press {
+		transition:
+			box-shadow 240ms var(--ease-out),
+			transform 160ms var(--ease-out);
+	}
+
+	/* ── ambience ──────────────────────────────────────────────────────────── */
+	.ambient-glow {
+		position: fixed;
+		inset: 0;
+		width: 100vw;
+		height: 100vh;
+		pointer-events: none;
+		z-index: -1;
+		background:
+			radial-gradient(circle at 15% 50%, rgba(94, 210, 156, 0.08) 0%, transparent 50%),
+			radial-gradient(circle at 85% 30%, rgba(0, 238, 252, 0.05) 0%, transparent 50%);
+	}
+
+	.bg-grid {
+		position: fixed;
+		inset: 0;
+		pointer-events: none;
+		z-index: -1;
+		background-size: 64px 100%;
+		background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+	}
+
+	.glow-ellipse {
+		background: radial-gradient(circle, rgba(94, 210, 156, 0.15) 0%, rgba(0, 219, 233, 0.15) 50%, transparent 70%);
+		filter: blur(25px);
+	}
+
+	/* ── header ────────────────────────────────────────────────────────────
+	   Full-bleed fixed shell with a centred container inside. The original
+	   used `fixed` + `max-w` + `mx-auto`, but mx-auto does nothing on a fixed
+	   element with no inset — so the bar hugged the left edge and stopped
+	   short of the right, which is what made it read as unattached. */
+	.site-header {
+		position: fixed;
+		inset-inline: 0;
+		top: 0;
+		z-index: 50;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+		background: rgba(7, 11, 10, 0.72);
+		backdrop-filter: blur(20px);
+		transition:
+			background-color 260ms var(--ease-out),
+			border-color 260ms var(--ease-out);
+	}
+	.site-header[data-scrolled='true'] {
+		background: rgba(7, 11, 10, 0.92);
+		border-bottom-color: rgba(94, 210, 156, 0.18);
+	}
+	.header-inner {
+		height: var(--nav-h);
+		transition: height 260ms var(--ease-out);
+	}
+	.site-header[data-scrolled='true'] .header-inner {
+		height: 56px;
+	}
+
+	.scroll-progress {
+		position: absolute;
+		inset-inline: 0;
+		bottom: -1px;
+		height: 2px;
+		overflow: hidden;
+	}
+	.scroll-progress > i {
+		display: block;
+		height: 100%;
+		width: 100%;
+		background: linear-gradient(90deg, #5ed29c, #00eefc);
+		transform-origin: left center;
+	}
+
+	/* One indicator that slides between links, rather than per-link borders
+	   fading in and out — the movement is what says these are a sequence. */
+	.nav-indicator {
+		position: absolute;
+		left: 0;
+		bottom: 2px;
+		height: 2px;
+		background: #5ed29c;
+		border-radius: 2px;
+		pointer-events: none;
+		transition:
+			transform 320ms var(--ease-out),
+			width 320ms var(--ease-out),
+			opacity 200ms ease;
+	}
+
+	/* ── mobile drawer ─────────────────────────────────────────────────────── */
+	.mobile-menu {
+		position: fixed;
+		inset: 0;
+		z-index: 45;
+		background: rgba(7, 11, 10, 0.97);
+		backdrop-filter: blur(24px);
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 8px;
+		padding: 0 24px;
+		opacity: 0;
+		visibility: hidden;
+		transition:
+			opacity 240ms var(--ease-out),
+			visibility 240ms;
+	}
+	.mobile-menu[data-open='true'] {
+		opacity: 1;
+		visibility: visible;
+	}
+	.mobile-menu a {
+		font-weight: 800;
+		font-size: clamp(28px, 8vw, 34px);
+		letter-spacing: -0.03em;
+		color: #e0e3e1;
+		padding: 10px 0;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+		opacity: 0;
+		transform: translateY(14px);
+		transition:
+			opacity 320ms var(--ease-out),
+			transform 320ms var(--ease-out);
+		transition-delay: var(--d, 0ms);
+	}
+	.mobile-menu[data-open='true'] a {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	/* ── scroll reveal ─────────────────────────────────────────────────────
+	   transform + opacity only, so it never triggers layout or paint. */
+	.reveal {
+		opacity: 0;
+		transform: translateY(18px);
+		transition:
+			opacity 620ms var(--ease-out),
+			transform 620ms var(--ease-out);
+		transition-delay: var(--d, 0ms);
+	}
+	.reveal[data-in='true'] {
+		opacity: 1;
+		transform: none;
+	}
+
+	/* ── skills matrix ─────────────────────────────────────────────────────
+	   A fixed label column is the whole trick: every group starts at the same
+	   x, so the eye scans one straight line down instead of hunting a heading
+	   inside each card. Hairlines rather than gaps make it read as one table
+	   instead of eight separate objects. */
+	.skill-row {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 10px;
+		padding: 18px 20px;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+	}
+	.skill-row:last-child {
+		border-bottom: none;
+	}
+	@media (min-width: 768px) {
+		.skill-row {
+			grid-template-columns: 190px 1fr;
+			gap: 24px;
+			padding: 18px 28px;
+			align-items: start;
+		}
+	}
+	.skill-key {
+		padding-top: 5px;
+		font-size: 11px;
+		font-weight: 700;
+		line-height: 1.6;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: #5ed29c;
+	}
+	.skill-vals {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+	/* flex-basis: 100% so a caveat never wraps beside a tag.
+
+	   Wrapping, specifically: text-wrap: pretty stops the last line being a
+	   single orphan word and evens the rag; hyphens: none blocks automatic
+	   hyphenation; a shorter measure means fewer, more even lines. Existing
+	   hyphens still break — "fine-tuning" was splitting as "fine-" / "tuning"
+	   — so those use a non-breaking hyphen in lib/cv.ts. */
+	.skill-note {
+		flex-basis: 100%;
+		margin-top: 8px;
+		max-width: 58ch;
+		font-size: 13px;
+		line-height: 1.65;
+		color: #87948b;
+		text-wrap: pretty;
+		-webkit-hyphens: none;
+		hyphens: none;
+	}
+
+	/* ── the before/after rail ─────────────────────────────────────────────
+	   The site's whole argument in one shape, so it gets a real device
+	   rather than three bullets. */
+	.ba-rail {
+		position: relative;
+		padding-left: 22px;
+	}
+	.ba-rail::before {
+		content: '';
+		position: absolute;
+		left: 3px;
+		top: 10px;
+		bottom: 10px;
+		width: 1px;
+		background: linear-gradient(180deg, #87948b, #5ed29c 55%, #00eefc);
+		opacity: 0.55;
+	}
+	.ba-row {
+		position: relative;
+		padding: 8px 0;
+	}
+	.ba-row::before {
+		content: '';
+		position: absolute;
+		left: -22px;
+		top: 14px;
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: #070b0a;
+		border: 1px solid currentColor;
+	}
+
+	/* The award hangs off the SAME rail the argument runs down, so it reads
+	   as a seal stamped on the claim rather than a tag floating beneath it. */
+	.award > i {
+		flex: 0 0 auto;
+		width: 36px;
+		height: 36px;
+		display: grid;
+		place-items: center;
+		border-radius: 50%;
+		border: 1px solid rgba(94, 210, 156, 0.45);
+		background: rgba(94, 210, 156, 0.07);
+		box-shadow: 0 0 0 4px #070b0a;
+		color: #5ed29c;
+		font-style: normal;
+		font-size: 15px;
+	}
+
+	.before-box {
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-left: 2px solid #87948b;
+		background: rgba(94, 210, 156, 0.04);
+		border-radius: 3px;
+		padding: 8px 12px;
+		font-size: 12px;
+		line-height: 1.55;
+		color: #bccac0;
+	}
+}
+
+/* ── reduced motion ───────────────────────────────────────────────────────
+   Fewer and gentler, not zero: keep the reveals' end state, drop the
+   movement, stop the loop entirely. */
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+	.reveal {
+		opacity: 1;
+		transform: none;
+		transition: none;
+	}
+	.glass-panel:hover {
+		transform: none;
+	}
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		transition-duration: 0.01ms !important;
+	}
+}

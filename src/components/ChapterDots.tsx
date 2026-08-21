@@ -59,7 +59,8 @@ export function ChapterDots() {
 									background: on ? tokens.primary : tokens.text.muted,
 									opacity: on ? 1 : 0.5,
 									boxShadow: on ? `0 0 0 4px ${tokens.primaryGlow}` : 'none',
-									transition: 'all 220ms ease',
+									transition:
+										'width 220ms var(--ease-out), height 220ms var(--ease-out), background-color 220ms ease, opacity 220ms ease, box-shadow 220ms ease',
 								}}
 							/>
 						</button>
