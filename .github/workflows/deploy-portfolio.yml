@@ -1,0 +1,83 @@
+name: Deploy portfolio (Next) to GitHub Pages
+
+# ── Read this before enabling ──────────────────────────────────────────────
+# The repo already has deploy.yml, which publishes the VITE app at the root of
+# https://hongphuc-pham.github.io/page/ on every push to main. A GitHub Pages
+# site can only have ONE deployment, so these two workflows are mutually
+# exclusive: whichever runs last wins, and running both on push means the site
+# flips between the two apps depending on ordering.
+#
+# So this one is workflow_dispatch ONLY — it never fires on its own. To make
+# the Next portfolio the published site:
+#   1. Run this workflow manually once and confirm the result, then
+#   2. delete (or also make manual) .github/workflows/deploy.yml.
+# ───────────────────────────────────────────────────────────────────────────
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: next-portfolio
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          cache-dependency-path: next-portfolio/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build static export
+        # A project page is served from /<repo>, so every asset URL needs that
+        # prefix. Without it the deployed page loads blank with 404s on /_next/*.
+        env:
+          NEXT_PUBLIC_BASE_PATH: /page
+        run: pnpm build
+
+      - name: Verify the export looks right
+        # Cheap guard against the two failure modes that are invisible until
+        # someone opens the live URL: a missing .nojekyll (Jekyll silently drops
+        # _next/) and asset URLs that forgot the base path.
+        run: |
+          test -f out/.nojekyll || { echo "::error::out/.nojekyll missing — Jekyll will drop _next/"; exit 1; }
+          grep -q '/page/_next/' out/index.html || { echo "::error::index.html has no /page/_next/ URLs — basePath did not apply"; exit 1; }
+          echo "export OK: $(find out -type f | wc -l) files"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: next-portfolio/out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
